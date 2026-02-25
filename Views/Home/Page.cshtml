@@ -1,0 +1,34 @@
+@model Page
+@{ViewData["Title"] = Model?.Title ?? "Page";}
+
+<section class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 class="page-title">@ViewData["Title"]</h1>
+                @if(Model != null && !string.IsNullOrEmpty(Model.Content))
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            @Html.Raw(Model.Content)
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">Content for this page is being prepared. Please check back soon.</div>
+                }
+            </div>
+            <div class="col-lg-4">
+                <div class="sidebar-widget">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/Submission/Submit"><i class="bi bi-chevron-right me-2"></i>Submit Paper</a></li>
+                        <li class="mb-2"><a href="/Home/AuthorGuidelines"><i class="bi bi-chevron-right me-2"></i>Author Guidelines</a></li>
+                        <li class="mb-2"><a href="/Issue/CurrentIssue"><i class="bi bi-chevron-right me-2"></i>Current Issue</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,35 @@
+@model ArchivesViewModel
+@{ViewData["Title"] = "Archives";}
+
+<section class="page-content">
+    <div class="container">
+        <h1 class="page-title">Archives</h1>
+        @if(Model.Volumes.Any())
+        {
+            foreach(var vol in Model.Volumes)
+            {
+                <div class="card mb-4">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                        <h5 class="mb-0" style="color: #ffffff;"><i class="bi bi-journal-bookmark me-2"></i>Volume @vol.VolumeNumber (@vol.Year)</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @foreach(var issue in vol.Issues)
+                        {
+                            <a href="/Issue/ViewIssue/@issue.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Issue @issue.IssueNumber</strong> - @issue.Title
+                                    <small class="text-muted ms-2">(@issue.QuarterName)</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">@issue.PaperCount Papers</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info">Archives will be available once issues are published.</div>
+        }
+    </div>
+</section>

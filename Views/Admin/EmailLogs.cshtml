@@ -1,0 +1,25 @@
+@model List<EmailLog>
+@{ViewData["Title"] = "Email Logs"; Layout = "_AdminLayout";}
+
+<div class="data-table">
+    <div class="p-3 border-bottom"><h5 class="mb-0">Email Logs (Last 100)</h5></div>
+    <table class="table">
+        <thead><tr><th>Date</th><th>To</th><th>Subject</th><th>Template</th><th>Status</th></tr></thead>
+        <tbody>
+            @foreach(var e in Model){
+                <tr>
+                    <td>@e.CreatedAt.ToString("dd MMM yyyy HH:mm")</td>
+                    <td>@e.ToEmail</td>
+                    <td>@(e.Subject.Length > 50 ? e.Subject.Substring(0, 50) + "..." : e.Subject)</td>
+                    <td>@e.TemplateName</td>
+                    <td>
+                        @if(e.Status == "Sent"){<span class="badge bg-success">Sent</span>}
+                        else if(e.Status == "Failed"){<span class="badge bg-danger" title="@e.ErrorMessage">Failed</span>}
+                        else if(e.Status == "Disabled"){<span class="badge bg-secondary">Disabled</span>}
+                        else{<span class="badge bg-warning">Pending</span>}
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

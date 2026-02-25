@@ -1,0 +1,53 @@
+@model CreateReviewerViewModel
+@{ViewData["Title"] = "Edit Reviewer"; Layout = "_AdminLayout";}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="data-table">
+            <div class="p-3 border-bottom"><h5 class="mb-0">Edit Reviewer</h5></div>
+            <div class="p-4">
+                <form asp-action="EditReviewer" method="post">
+                    <div asp-validation-summary="All" class="alert alert-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none")"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name *</label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name *</label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email *</label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password <small class="text-muted">(leave blank to keep current)</small></label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Institution</label>
+                        <input asp-for="Institution" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Specialization</label>
+                        <textarea asp-for="Specialization" class="form-control" rows="2" placeholder="e.g., Constitutional Law, Human Rights"></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="/editorial/reviewers" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

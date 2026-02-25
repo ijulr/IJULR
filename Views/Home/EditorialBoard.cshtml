@@ -1,0 +1,417 @@
+@using IJULR.Web.Helpers
+@inject FileUrlHelper FileUrlHelper
+
+@model IEnumerable<EditorialBoardMember>
+    @{ViewData["Title"] = "Editorial Board";}
+
+    <style>
+        .page-header {
+            text-align: center;
+            padding: 40px 0 30px;
+        }
+
+            .page-header h1 {
+                font-size: 2.25rem;
+                font-weight: 700;
+                color: #1a365d;
+                margin-bottom: 10px;
+            }
+
+        .page-header-line {
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3182ce, #63b3ed);
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        .section-divider {
+            background: linear-gradient(90deg, #1a365d, #2c5282);
+            height: 8px;
+            border-radius: 4px;
+            margin: 40px 0 30px;
+        }
+
+        .section-title {
+            color: #1a365d;
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-left: 15px;
+            border-left: 4px solid #b8860b;
+        }
+
+        .member-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+        }
+
+            .member-card:hover {
+                box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+                transform: translateY(-2px);
+            }
+
+        .member-photo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .member-photo-placeholder {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 4px;
+        }
+
+        .member-role {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 8px;
+        }
+
+        .member-details {
+            font-size: 0.85rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .member-email {
+            font-size: 0.85rem;
+            color: #3182ce;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+            .member-email:hover {
+                text-decoration: underline;
+            }
+
+        .member-specialization {
+            display: inline-block;
+            background: #f0f4f8;
+            color: #2c5282;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px dashed #e2e8f0;
+        }
+
+            .empty-state i {
+                font-size: 3rem;
+                color: #a0aec0;
+                margin-bottom: 15px;
+            }
+    </style>
+
+    <section class="page-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Editorial Board</h1>
+                <div class="page-header-line"></div>
+            </div>
+
+            @if(Model != null && Model.Any(m => m.IsActive))
+        {
+            var chiefEditors = Model.Where(m => m.BoardCategory == "ChiefEditor" && m.IsActive).OrderBy(m => m.DisplayOrder);
+            var editorialDirectors = Model.Where(m => m.BoardCategory == "EditorialDirector" && m.IsActive).OrderBy(m => m.DisplayOrder);
+            var associateEditors = Model.Where(m => m.BoardCategory == "AssociateEditor" && m.IsActive).OrderBy(m => m.DisplayOrder);
+            var boardMembers = Model.Where(m => m.BoardCategory == "EditorialBoard" && m.IsActive).OrderBy(m => m.DisplayOrder);
+            var reviewers = Model.Where(m => m.BoardCategory == "Reviewer" && m.IsActive).OrderBy(m => m.DisplayOrder);
+
+            <!-- Chief Editors -->
+            if(chiefEditors.Any())
+            {
+            <div class="section-divider"></div>
+            <h3 class="section-title">Chief Editor</h3>
+            <div class="row">
+                @foreach(var member in chiefEditors)
+                    {
+                <div class="col-lg-6">
+                    <div class="member-card">
+                        @if(!string.IsNullOrEmpty(member.ProfileImagePath))
+                                {
+                        <img src="@member.ProfileImagePath" alt="@member.FullName" class="member-photo">
+                                }
+                                else
+                                {
+                        <div class="member-photo-placeholder">@member.FullName.Substring(0, 1)</div>
+                                }
+                        <div class="member-info">
+                            <div class="member-name">@member.FullName</div>
+                            <div class="member-role">Chief Editor</div>
+                            <div class="member-details">
+                                @if(!string.IsNullOrEmpty(member.Designation))
+                                        {
+                                <span>@member.Designation</span><br>
+                                        }
+                                @if(!string.IsNullOrEmpty(member.Institution))
+                                        {
+                                <span>@member.Institution</span>
+                                        }
+                            </div>
+                            @if(!string.IsNullOrEmpty(member.Specialization))
+                                    {
+                            <span class="member-specialization">@member.Specialization</span>
+                                    }
+                            @if(!string.IsNullOrEmpty(member.Email))
+                                    {
+                            <a href="mailto:@member.Email" class="member-email">
+                                <i class="bi bi-envelope"></i> @member.Email
+                            </a>
+                                    }
+                        </div>
+                    </div>
+                </div>
+                    }
+            </div>
+            }
+
+ <!-- Editorial Directors -->
+            if(editorialDirectors.Any())
+            {
+            <div class="section-divider"></div>
+            <h3 class="section-title">Editorial Director</h3>
+            <div class="row">
+                @foreach(var member in editorialDirectors)
+                    {
+                <div class="col-lg-6">
+                    <div class="member-card">
+                        @if(!string.IsNullOrEmpty(member.ProfileImagePath))
+                                {
+
+                                    <img src="@FileUrlHelper.GetDirectCloudUrl(member.ProfileImagePath)"
+                                         alt="@member.FullName" class="member-photo">
+                                }
+                                else
+                                {
+                        <div class="member-photo-placeholder">@member.FullName.Substring(0, 1)</div>
+                                }
+                        <div class="member-info">
+                            <div class="member-name">@member.FullName</div>
+                            <div class="member-role">Editorial Director</div>
+                            <div class="member-details">
+                                @if(!string.IsNullOrEmpty(member.Designation))
+                                        {
+                                <span>@member.Designation</span><br>
+                                        }
+                                @if(!string.IsNullOrEmpty(member.Institution))
+                                        {
+                                <span>@member.Institution</span>
+                                        }
+                            </div>
+                            @if(!string.IsNullOrEmpty(member.Specialization))
+                                    {
+                            <span class="member-specialization">@member.Specialization</span>
+                                    }
+                            @if(!string.IsNullOrEmpty(member.Email))
+                                    {
+                            <a href="mailto:@member.Email" class="member-email">
+                                <i class="bi bi-envelope"></i> @member.Email
+                            </a>
+                                    }
+                        </div>
+                    </div>
+                </div>
+                    }
+            </div>
+            }
+
+ <!-- Associate Editors -->
+            if(associateEditors.Any())
+            {
+            <div class="section-divider"></div>
+            <h3 class="section-title">Associate Editors</h3>
+            <div class="row">
+                @foreach(var member in associateEditors)
+                    {
+                <div class="col-lg-6">
+                    <div class="member-card">
+                        @if(!string.IsNullOrEmpty(member.ProfileImagePath))
+                                {
+                                    <img src="@FileUrlHelper.GetDirectCloudUrl(member.ProfileImagePath)"
+                                         alt="@member.FullName" class="member-photo">
+                                }
+                                else
+                                {
+                        <div class="member-photo-placeholder">@member.FullName.Substring(0, 1)</div>
+                                }
+                        <div class="member-info">
+                            <div class="member-name">@member.FullName</div>
+                            <div class="member-role">Associate Editor</div>
+                            <div class="member-details">
+                                @if(!string.IsNullOrEmpty(member.Designation))
+                                        {
+                                <span>@member.Designation</span><br>
+                                        }
+                                @if(!string.IsNullOrEmpty(member.Institution))
+                                        {
+                                <span>@member.Institution</span>
+                                        }
+                            </div>
+                            @if(!string.IsNullOrEmpty(member.Specialization))
+                                    {
+                            <span class="member-specialization">@member.Specialization</span>
+                                    }
+                            @if(!string.IsNullOrEmpty(member.Email))
+                                    {
+                            <a href="mailto:@member.Email" class="member-email">
+                                <i class="bi bi-envelope"></i> @member.Email
+                            </a>
+                                    }
+                        </div>
+                    </div>
+                </div>
+                    }
+            </div>
+            }
+
+ <!-- Board Members -->
+            if(boardMembers.Any())
+            {
+            <div class="section-divider"></div>
+            <h3 class="section-title">Editorial Board Members</h3>
+            <div class="row">
+                @foreach(var member in boardMembers)
+                    {
+                <div class="col-lg-6">
+                    <div class="member-card">
+                        @if(!string.IsNullOrEmpty(member.ProfileImagePath))
+                                {
+                                    <img src="@FileUrlHelper.GetDirectCloudUrl(member.ProfileImagePath)"
+                                         alt="@member.FullName" class="member-photo">
+                                }
+                                else
+                                {
+                        <div class="member-photo-placeholder">@member.FullName.Substring(0, 1)</div>
+                                }
+                        <div class="member-info">
+                            <div class="member-name">@member.FullName</div>
+                            <div class="member-role">Editorial Board Member</div>
+                            <div class="member-details">
+                                @if(!string.IsNullOrEmpty(member.Designation))
+                                        {
+                                <span>@member.Designation</span><br>
+                                        }
+                                @if(!string.IsNullOrEmpty(member.Institution))
+                                        {
+                                <span>@member.Institution</span>
+                                        }
+                            </div>
+                            @if(!string.IsNullOrEmpty(member.Specialization))
+                                    {
+                            <span class="member-specialization">@member.Specialization</span>
+                                    }
+                            @if(!string.IsNullOrEmpty(member.Email))
+                                    {
+                            <a href="mailto:@member.Email" class="member-email">
+                                <i class="bi bi-envelope"></i> @member.Email
+                            </a>
+                                    }
+                        </div>
+                    </div>
+                </div>
+                    }
+            </div>
+            }
+
+ <!-- Reviewers -->
+            if(reviewers.Any())
+            {
+            <div class="section-divider"></div>
+            <h3 class="section-title">Reviewers</h3>
+            <div class="row">
+                @foreach(var member in reviewers)
+                    {
+                <div class="col-lg-6">
+                    <div class="member-card">
+                        @if(!string.IsNullOrEmpty(member.ProfileImagePath))
+                                {
+                                    <img src="@FileUrlHelper.GetDirectCloudUrl(member.ProfileImagePath)"
+                                         alt="@member.FullName" class="member-photo">
+                                }
+                                else
+                                {
+                        <div class="member-photo-placeholder">@member.FullName.Substring(0, 1)</div>
+                                }
+                        <div class="member-info">
+                            <div class="member-name">@member.FullName</div>
+                            <div class="member-role">Reviewer</div>
+                            <div class="member-details">
+                                @if(!string.IsNullOrEmpty(member.Designation))
+                                        {
+                                <span>@member.Designation</span><br>
+                                        }
+                                @if(!string.IsNullOrEmpty(member.Institution))
+                                        {
+                                <span>@member.Institution</span>
+                                        }
+                            </div>
+                            @if(!string.IsNullOrEmpty(member.Specialization))
+                                    {
+                            <span class="member-specialization">@member.Specialization</span>
+                                    }
+                            @if(!string.IsNullOrEmpty(member.Email))
+                                    {
+                            <a href="mailto:@member.Email" class="member-email">
+                                <i class="bi bi-envelope"></i> @member.Email
+                            </a>
+                                    }
+                        </div>
+                    </div>
+                </div>
+                    }
+            </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-people"></i>
+                <h5>Editorial Board Coming Soon</h5>
+                <p class="text-muted">The Editorial Board information is being finalized and will be available soon.</p>
+            </div>
+        }
+        </div>
+    </section>

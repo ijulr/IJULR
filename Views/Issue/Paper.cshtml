@@ -1,0 +1,487 @@
+@using IJULR.Web.Helpers
+@inject FileUrlHelper FileUrlHelper
+@model PaperDetailsViewModel
+@{ViewData["Title"] = Model.Paper.PaperTitle;}
+
+<style>
+    .paper-header {
+        background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+        color: white;
+        padding: 25px 30px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .paper-tabs {
+        background: #1a365d;
+        padding: 0 20px;
+        border-radius: 0 0 8px 8px;
+    }
+
+        .paper-tabs .nav-link {
+            color: rgba(255,255,255,0.7);
+            border: none;
+            padding: 12px 20px;
+            font-weight: 500;
+            border-radius: 0;
+        }
+
+            .paper-tabs .nav-link:hover {
+                color: white;
+                background: rgba(255,255,255,0.1);
+            }
+
+            .paper-tabs .nav-link.active {
+                color: white;
+                background: #2c5282;
+                border-bottom: 3px solid #b8860b;
+            }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        transition: all 0.2s;
+    }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+    .content-section {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .abstract-text {
+        color: #4a5568;
+        line-height: 1.8;
+        text-align: justify;
+        /* ADD THESE THREE LINES */
+        white-space: pre-line; /* Respects actual line breaks in your data */
+        overflow-wrap: break-word; /* Forces the text to stay inside the box */
+        word-break: break-all; /* Specifically allows breaking mid-word for long strings */
+    }
+    .keyword-tag {
+        display: inline-block;
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+        padding: 6px 14px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .info-table {
+        width: 100%;
+    }
+
+        .info-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+            .info-table td:first-child {
+                font-weight: 600;
+                color: #1a202c;
+                width: 140px;
+            }
+
+            .info-table td:last-child {
+                color: #4a5568;
+            }
+
+        .info-table a {
+            color: #3182ce;
+            text-decoration: none;
+        }
+
+            .info-table a:hover {
+                text-decoration: underline;
+            }
+
+    .sidebar-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .sidebar-card-header {
+        background: #f8fafc;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+        .sidebar-card-header h5 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a365d;
+        }
+
+    .sidebar-card-body {
+        padding: 15px 20px;
+    }
+
+    .sidebar-info {
+        margin-bottom: 12px;
+    }
+
+        .sidebar-info label {
+            display: block;
+            font-size: 0.75rem;
+            color: #718096;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .sidebar-info span {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+    .btn-download {
+        width: 100%;
+        padding: 12px;
+        border-radius: 5px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        text-decoration: none;
+    }
+
+    .btn-download-pdf {
+        background: #1a365d;
+        color: white;
+        border: none;
+    }
+
+        .btn-download-pdf:hover {
+            background: #2c5282;
+            color: white;
+        }
+
+    .btn-export {
+        background: white;
+        color: #3182ce;
+        border: 1px solid #3182ce;
+    }
+
+        .btn-export:hover {
+            background: #ebf8ff;
+            color: #2c5282;
+        }
+
+    .citation-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 5px;
+        padding: 15px;
+        font-size: 0.85rem;
+        color: #4a5568;
+        line-height: 1.6;
+    }
+
+    .author-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+        .author-item:last-child {
+            border-bottom: none;
+        }
+
+    .author-avatar {
+        width: 40px;
+        height: 40px;
+        background: #e2e8f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #718096;
+    }
+
+    .author-name {
+        font-weight: 600;
+        color: #1a202c;
+    }
+
+    .author-affiliation {
+        font-size: 0.8rem;
+        color: #718096;
+    }
+</style>
+
+<section class="page-content py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Paper Header -->
+                <div class="paper-header">
+                    <h1 class="h3 fw-bold mb-3">@Model.Paper.PaperTitle</h1>
+                    <p class="mb-3 opacity-75">@string.Join(", ", Model.Paper.Authors.Select(a => a.FullName))</p>
+                    <div class="d-flex flex-wrap gap-2">
+                            <a href="@FileUrlHelper.GetViewUrl(Model.Paper?.ManuscriptFilePath)"
+                        class="action-btn">
+                            <i class="bi bi-download"></i> Download Full Paper
+                        </a>
+                        <a href="#" class="action-btn" data-bs-toggle="modal" data-bs-target="#shareModal">
+                            <i class="bi bi-share"></i> Share
+                        </a>
+                        <a href="/Issue/ExportCitation/@Model.Paper.Id" class="action-btn">
+                            <i class="bi bi-journal-text"></i> Export Citation
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="paper-tabs mb-4">
+                    <ul class="nav nav-tabs border-0" id="paperTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="article-tab" data-bs-toggle="tab" href="#article" role="tab">Article</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="authors-tab" data-bs-toggle="tab" href="#authors" role="tab">Authors</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Article Tab -->
+                    <div class="tab-pane fade show active" id="article" role="tabpanel">
+                        <!-- Abstract -->
+                        <div class="content-section">
+                            <h4 class="section-title">Abstract</h4>
+                            <p class="abstract-text">@Model.Paper.Abstract</p>
+                        </div>
+
+                        <!-- Keywords -->
+                        @if(!string.IsNullOrEmpty(Model.Paper.Keywords))
+                        {
+                        <div class="content-section">
+                            <h4 class="section-title">Keywords</h4>
+                            <div>
+                                @foreach(var keyword in Model.Paper.Keywords.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                <span class="keyword-tag">@keyword.Trim()</span>
+                                    }
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Paper Information -->
+                        <div class="content-section">
+                            <h4 class="section-title">Paper Information</h4>
+                            <table class="info-table">
+                                <tr>
+                                    <td>Type</td>
+                                    <td>Research Paper</td>
+                                </tr>
+                                <tr>
+                                    <td>Information</td>
+                                    <td>
+                                        International Journal of Unified Law Research,<br>
+                                        Volume @Model.Paper.Issue?.Volume?.VolumeNumber, Issue @Model.Paper.Issue?.IssueNumber, Pages @Model.Paper.PageRange<br>
+                                        @if(!string.IsNullOrEmpty(Model.Paper.DOI))
+                                        {
+                                        <strong>DOI:</strong>  <a href="https://doi.org/@Model.Paper.DOI" target="_blank">https://doi.org/@Model.Paper.DOI</a>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Creative Commons</td>
+                                    <td>
+                                        <div class="mb-2">
+                                            <img src="https://licensebuttons.net/l/by-nc/4.0/88x31.png" alt="CC BY-NC 4.0" style="height: 20px;">
+                                        </div>
+                                        <small class="text-muted">
+                                            This is an Open Access article, distributed under the terms of the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0), which permits remixing, adapting, and building upon the work for non-commercial use, provided the original work is properly cited.
+                                        </small>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Copyright</td>
+                                    <td>Copyright © IJULR @DateTime.Now.Year</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Authors Tab -->
+                    <div class="tab-pane fade" id="authors" role="tabpanel">
+                        <div class="content-section">
+                            <h4 class="section-title">Authors</h4>
+                            @foreach(var author in Model.Paper.Authors.OrderBy(a => a.AuthorOrder))
+                            {
+                            <div class="author-item">
+                                <div class="author-avatar">
+                                    <i class="bi bi-person fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="author-name">
+                                        @author.FullName
+                                        @if(author.IsCorresponding)
+                                            {
+                                        <span class="badge bg-primary ms-2">Corresponding</span>
+                                            }
+                                    </div>
+                                    @if(!string.IsNullOrEmpty(author.Institution))
+                                        {
+                                    <div class="author-affiliation">@author.Institution</div>
+                                        }
+                                    @if(!string.IsNullOrEmpty(author.Designation))
+                                        {
+                                    <div class="author-affiliation">@author.Designation</div>
+                                        }
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Paper Info Card -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <h5><i class="bi bi-info-circle me-2"></i>Paper Details</h5>
+                    </div>
+                    <div class="sidebar-card-body">
+                        <div class="sidebar-info">
+                            <label>Page No</label>
+                            <span>@Model.Paper.PageRange</span>
+                        </div>
+                        <div class="sidebar-info">
+                            <label>Volume</label>
+                            <span>@Model.Paper.Issue?.Volume?.VolumeNumber</span>
+                        </div>
+                        <div class="sidebar-info">
+                            <label>Issue</label>
+                            <span>@Model.Paper.Issue?.IssueNumber (@Model.Paper.Issue?.QuarterName)</span>
+                        </div>
+                        <div class="sidebar-info">
+                            <label>Year</label>
+                            <span>@Model.Paper.Issue?.Volume?.Year</span>
+                        </div>
+                        @if(!string.IsNullOrEmpty(Model.Paper.DOI))
+                        {
+                        <div class="sidebar-info">
+                            <label>DOI</label>
+                            <span style="word-break: break-all; font-size: 0.85rem;">
+                                <a href="https://doi.org/@Model.Paper.DOI" target="_blank">@Model.Paper.DOI</a>
+                            </span>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Download Card -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <h5><i class="bi bi-download me-2"></i>Download</h5>
+                    </div>
+                    <div class="sidebar-card-body">
+                            <a href="@FileUrlHelper.GetViewUrl(Model.Paper?.ManuscriptFilePath)"
+
+                        class="btn-download btn-download-pdf">
+                            <i class="bi bi-file-pdf"></i> Download PDF
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Export Citation Card -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <h5><i class="bi bi-quote me-2"></i>Export Citation</h5>
+                    </div>
+                    <div class="sidebar-card-body">
+                        <a href="/Issue/ExportCitation/@Model.Paper.Id?format=text" class="btn-download btn-export">
+                            <i class="bi bi-file-text"></i> Plain Text
+                        </a>
+                        <a href="/Issue/ExportCitation/@Model.Paper.Id?format=bibtex" class="btn-download btn-export" hidden>
+                            <i class="bi bi-code-slash"></i> BibTeX
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Citation Card -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <h5><i class="bi bi-journal-bookmark me-2"></i>Citation</h5>
+                    </div>
+                    <div class="sidebar-card-body">
+                        <div class="citation-box">
+                            @Model.Citation
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Share this paper</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex gap-3 justify-content-center mb-3">
+                    <a href="https://twitter.com/intent/tweet?url=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + "/Issue/Paper/" + Model.Paper.Id)&text=@Uri.EscapeDataString(Model.Paper.PaperTitle)" target="_blank" class="btn btn-outline-primary">
+                        <i class="bi bi-twitter"></i> Twitter
+                    </a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + "/Issue/Paper/" + Model.Paper.Id)" target="_blank" class="btn btn-outline-primary">
+                        <i class="bi bi-linkedin"></i> LinkedIn
+                    </a>
+                    <a href="mailto:?subject=@Uri.EscapeDataString(Model.Paper.PaperTitle)&body=@Uri.EscapeDataString("Check out this paper: " + Context.Request.Scheme + "://" + Context.Request.Host + "/Issue/Paper/" + Model.Paper.Id)" class="btn btn-outline-primary">
+                        <i class="bi bi-envelope"></i> Email
+                    </a>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="shareUrl" value="@Context.Request.Scheme://@Context.Request.Host/Issue/Paper/@Model.Paper.Id" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('shareUrl').value); this.innerHTML='<i class=\'bi bi-check\'></i> Copied!';">
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

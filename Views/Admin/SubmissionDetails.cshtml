@@ -1,0 +1,400 @@
+@using IJULR.Web.Helpers
+@inject FileUrlHelper FileUrlHelper
+@model SubmissionDetailsViewModel
+@{
+    ViewData["Title"] = Model.Submission.TrackingId;
+    Layout = "_AdminLayout";
+    var s = Model.Submission;
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="data-table mb-4">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">@s.TrackingId</h5>
+                <span class="badge badge-status badge-@s.Status.ToLower() fs-6">@s.Status</span>
+            </div>
+            <div class="p-4">
+                <h4>@s.PaperTitle</h4>
+                <p><strong>Category:</strong> @s.Category</p>
+                <p><strong>Submitted:</strong> @s.SubmittedAt.ToString("dd MMM yyyy, hh:mm tt")</p>
+                @if (!string.IsNullOrEmpty(s.Abstract))
+                {
+                    <p><strong>Abstract:</strong> @s.Abstract</p>
+                }
+                @if (!string.IsNullOrEmpty(s.Keywords))
+                {
+                    <p><strong>Keywords:</strong> @s.Keywords</p>
+                }
+                @if (!string.IsNullOrEmpty(s.ManuscriptFilePath))
+                {
+                    <p>
+                        <a href="@FileUrlHelper.GetViewUrl(s.ManuscriptFilePath)"
+                           target="_blank"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-file-pdf me-1"></i>View Manuscript
+                        </a>
+                    </p>
+                }
+
+
+            </div>
+        </div>
+
+        <div class="data-table mb-4">
+            <div class="p-3 border-bottom"><h6 class="mb-0">Authors</h6></div>
+            <div class="p-3">
+                @foreach (var a in s.Authors)
+                {
+                    <div class="mb-2">
+                        <strong>@a.AuthorOrder. @a.FullName</strong> @(a.IsCorresponding ? "(Corresponding)" : "")
+                        <br><small class="text-muted">@a.Email | @a.Institution</small>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(s.PaymentReceiptFilePath))
+        {
+            <div class="data-table mb-4">
+                <div class="p-3 border-bottom"><h6 class="mb-0">Payment Receipt</h6></div>
+                <div class="p-3">
+                    <p><strong>Status:</strong> @s.PaymentStatus</p>
+                    <p><strong>Uploaded:</strong> @s.PaymentDate?.ToString("dd MMM yyyy")</p>
+                                <a href="@FileUrlHelper.GetViewUrl(s.PaymentReceiptFilePath)"
+                    target="_blank" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark me-1"></i>View Receipt</a>
+                </div>
+            </div>
+        }
+
+        <div class="data-table mb-4">
+            <div class="p-3 border-bottom"><h6 class="mb-0">Reviews</h6></div>
+            <div class="p-3">
+                @if (Model.Reviews.Any())
+                {
+                    foreach (var r in Model.Reviews)
+                    {
+                        <div class="border-bottom pb-2 mb-2">
+                            <strong>@r.Reviewer?.User?.FullName</strong> - @r.Status
+                            @if (r.Score.HasValue)
+                            {
+                                <span class="ms-2">Score: @r.Score/5</span>
+                            }
+                            @if (!string.IsNullOrEmpty(r.Recommendation))
+                            {
+                                <span class="badge bg-info ms-2">@r.Recommendation</span>
+                            }
+                            @if (!string.IsNullOrEmpty(r.Comments))
+                            {
+                                <p class="small mt-1 mb-0">@r.Comments</p>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted mb-0">No reviews yet</p>
+                }
+            </div>
+        </div>
+
+        @* Published Versions Section *@
+        @if (s.Status == "Published" && Model.PublishedVersions.Any())
+        {
+            <div class="data-table mb-4">
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Published Versions</h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addPublicationModal">
+                        <i class="bi bi-plus"></i> Add to Another Issue
+                    </button>
+                </div>
+                <table class="table mb-0">
+                    <thead>
+                        <tr><th>Issue</th><th>Pages</th><th>Published</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pv in Model.PublishedVersions)
+                        {
+                            <tr>
+                                <td>Vol. @pv.Issue.Volume.VolumeNumber, Issue @pv.Issue.IssueNumber<br><small class="text-muted">@pv.Issue.Title</small></td>
+                                <td>@pv.PageStart - @pv.PageEnd</td>
+                                <td>@pv.PublishedAt.ToString("dd MMM yyyy")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(pv.PublishedPdfPath))
+                                    {
+                                        <a href="@pv.PublishedPdfPath" class="btn btn-sm btn-outline-success" target="_blank" title="Download"><i class="bi bi-download"></i></a>
+                                    }
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-edit-publication"
+                                            data-version-id="@pv.Id"
+                                            data-issue-id="@pv.IssueId"
+                                            data-page-start="@pv.PageStart"
+                                            data-page-end="@pv.PageEnd"
+                                            title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <form asp-action="DeletePublication" asp-route-id="@s.Id" asp-route-versionId="@pv.Id" method="post" style="display:inline" onsubmit="return confirm('Delete this publication?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="data-table">
+            <div class="p-3 border-bottom"><h6 class="mb-0">Status History</h6></div>
+            <table class="table mb-0">
+                <tbody>
+                    @foreach (var h in Model.History)
+                    {
+                        <tr><td>@h.ChangedAt.ToString("dd MMM yyyy HH:mm")</td><td><span class="badge bg-secondary">@h.ToStatus</span></td><td>@h.Remarks</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="data-table mb-4">
+            <div class="p-3 border-bottom"><h6 class="mb-0">Update Status</h6></div>
+            <div class="p-3">
+                @* If already published, show link to publish page *@
+                @if (s.Status == "Published")
+                {
+                    <div class="mb-3">
+                        <a href="/editorial/submission/@s.Id/publish" class="btn btn-outline-success w-100">
+                            <i class="bi bi-journal-check me-2"></i>View/Edit Publication
+                        </a>
+                    </div>
+                    <hr />
+                }
+                <form asp-action="UpdateStatus" asp-route-id="@s.Id" method="post" id="statusForm" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <select name="newStatus" id="statusSelect" class="form-select">
+                            @foreach (var st in SubmissionListViewModel.Statuses)
+                            {
+                                <option value="@st" selected="@(s.Status == st)">@st</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="remarks" class="form-control" rows="3" placeholder="Remarks / Revision Comments">@s.EditorRemarks</textarea>
+                    </div>
+
+                    @* QR Code Upload - shown for Accepted/PaymentPending *@
+                    <div class="mb-3" id="qrUploadSection" style="display:none;">
+                        <label class="form-label">Payment QR Code <span class="text-danger">*</span></label>
+                        <input type="file" name="PaymentQRFile" id="PaymentQRFile" class="form-control" accept="image/*" />
+                        <small class="text-muted">Upload QR code image for payment</small>
+                    </div>
+
+                    @* Publish redirect button - shown when Published is selected from non-published state *@
+                    <div id="publishRedirectBtn" style="display:none;">
+                        <a href="/editorial/submission/@s.Id/publish" class="btn btn-success w-100">
+                            <i class="bi bi-journal-check me-2"></i>Go to Publish Page
+                        </a>
+                    </div>
+
+                    <button type="submit" id="updateStatusBtn" class="btn btn-primary w-100">Update Status</button>
+                </form>
+            </div>
+        </div>
+
+        @if (s.Status == "Submitted" || s.Status == "UnderReview")
+        {
+            <div class="data-table mb-4">
+                <div class="p-3 border-bottom"><h6 class="mb-0">Assign Reviewer</h6></div>
+                <div class="p-3">
+                    <form asp-action="AssignReviewer" asp-route-id="@s.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <select name="reviewerId" class="form-select">
+                                <option value="">Select Reviewer</option>
+                                @foreach (var r in Model.AvailableReviewers)
+                                {
+                                    <option value="@r.Id">@r.User?.FullName (@r.CurrentAssignments/@r.MaxAssignments)</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Assign</button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        @if (s.Status == "Published")
+        {
+            <div class="data-table mb-4">
+                <div class="p-3 border-bottom"><h6 class="mb-0">Certificate</h6></div>
+                <div class="p-3">
+                    @if (!string.IsNullOrEmpty(s.CertificateFilePath))
+                    {
+                        <a href="@s.CertificateFilePath" target="_blank" class="btn btn-primary w-100 mb-2"><i class="bi bi-download me-2"></i>Download Certificate</a>
+                    }
+                    <form asp-action="UpdateCertificate" asp-route-id="@s.Id" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="file" name="CertificatePdf" class="form-control mb-2" accept=".pdf" required />
+                        <button type="submit" class="btn btn-outline-secondary w-100"><i class="bi bi-upload me-2"></i>Upload New Certificate</button>
+                    </form>
+                </div>
+            </div>
+
+            @* Add to another issue button for published submissions *@
+            if (!Model.PublishedVersions.Any())
+            {
+                <div class="data-table">
+                    <div class="p-3 border-bottom"><h6 class="mb-0">Add Publication</h6></div>
+                    <div class="p-3">
+                        <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addPublicationModal">
+                            <i class="bi bi-plus me-2"></i>Add to Another Issue
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@* Add Publication Modal *@
+@if (s.Status == "Published")
+{
+    <div class="modal fade" id="addPublicationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="AddPublication" asp-route-id="@s.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add to Another Issue</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select Issue</label>
+                            <select name="issueId" class="form-select" required>
+                                <option value="">-- Select Issue --</option>
+                                @foreach (var issue in Model.AvailableIssues)
+                                {
+                                    <option value="@issue.Id">Vol. @issue.Volume.VolumeNumber, Issue @issue.IssueNumber - @issue.Title</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Start Page</label>
+                                <input type="number" name="pageStart" class="form-control" min="1" required />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">End Page</label>
+                                <input type="number" name="pageEnd" class="form-control" min="1" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Publication</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editPublicationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="UpdateStatus" asp-route-id="@s.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="newStatus" value="Published" />
+                    <input type="hidden" name="publishedVersionId" id="editVersionId" />
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Publication</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select Issue</label>
+                            <select name="issueId" id="editIssueId" class="form-select" required>
+                                @foreach (var issue in Model.AvailableIssues)
+                                {
+                                    <option value="@issue.Id">Vol. @issue.Volume.VolumeNumber, Issue @issue.IssueNumber - @issue.Title</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Start Page</label>
+                                <input type="number" name="pageStart" id="editPageStart" class="form-control" min="1" required />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">End Page</label>
+                                <input type="number" name="pageEnd" id="editPageEnd" class="form-control" min="1" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Publication</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            var statusSelect = document.getElementById('statusSelect');
+            var publishRedirectBtn = document.getElementById('publishRedirectBtn');
+            var updateStatusBtn = document.getElementById('updateStatusBtn');
+            var qrUploadSection = document.getElementById('qrUploadSection');
+            var qrFileInput = document.getElementById('PaymentQRFile');
+            var currentStatus = '@s.Status';
+
+            function updateButtonVisibility() {
+                var selectedStatus = statusSelect.value;
+
+                // Show publish redirect only when changing FROM non-published TO published
+                var showPublishRedirect = (selectedStatus === 'Published' && currentStatus !== 'Published');
+
+                // Show QR upload for Accepted or PaymentPending
+                var showQRUpload = (selectedStatus === 'Accepted' || selectedStatus === 'PaymentPending');
+
+                if (publishRedirectBtn) {
+                    publishRedirectBtn.style.display = showPublishRedirect ? 'block' : 'none';
+                }
+                updateStatusBtn.style.display = showPublishRedirect ? 'none' : 'block';
+
+                // QR Upload visibility
+                if (qrUploadSection) {
+                    qrUploadSection.style.display = showQRUpload ? 'block' : 'none';
+                    // Clear file if hidden
+                    if (!showQRUpload && qrFileInput) {
+                        qrFileInput.value = '';
+                    }
+                }
+            }
+
+            statusSelect.addEventListener('change', updateButtonVisibility);
+
+            // Initial check
+            updateButtonVisibility();
+        })();
+
+        // Edit publication modal
+        document.querySelectorAll('.btn-edit-publication').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.getElementById('editVersionId').value = this.dataset.versionId;
+                document.getElementById('editIssueId').value = this.dataset.issueId;
+                document.getElementById('editPageStart').value = this.dataset.pageStart;
+                document.getElementById('editPageEnd').value = this.dataset.pageEnd;
+
+                var modal = new bootstrap.Modal(document.getElementById('editPublicationModal'));
+                modal.show();
+            });
+        });
+    </script>
+}

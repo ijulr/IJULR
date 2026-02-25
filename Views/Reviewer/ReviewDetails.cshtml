@@ -1,0 +1,275 @@
+﻿@model ReviewAssignment
+@{
+    Layout = null;
+    var s = Model.Submission;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Paper Details - IJULR Reviewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+            .info-card h6 {
+                color: #1a4f7a;
+                border-bottom: 2px solid #f39c12;
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+            }
+
+        .label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .author-item {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+            .author-item.corresponding {
+                border-left: 4px solid #28a745;
+            }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <span class="navbar-brand">IJULR - Reviewer Portal</span>
+            <div>
+                <a href="/reviewer/dashboard" class="btn btn-outline-light btn-sm me-2"><i class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
+                <span class="text-light">@ViewBag.ReviewerName</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Paper Info -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Paper Details</h5>
+                        <span class="badge bg-light text-primary">@s.TrackingId</span>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="text-primary mb-3">@s.PaperTitle</h4>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <span class="label">Category:</span> @s.Category
+                            </div>
+                            <div class="col-md-6">
+                                <span class="label">Submitted:</span> @s.SubmittedAt.ToString("dd MMM yyyy, hh:mm tt")
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(s.Keywords))
+                        {
+                        <div class="mb-3">
+                            <span class="label">Keywords:</span><br>
+                            @foreach (var keyword in s.Keywords.Split(','))
+                                {
+                            <span class="badge bg-secondary me-1 mb-1">@keyword.Trim()</span>
+                                }
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Abstract -->
+                @if (!string.IsNullOrEmpty(s.Abstract))
+                {
+                <div class="info-card">
+                    <h6><i class="bi bi-card-text me-2"></i>Abstract</h6>
+                    <p style="text-align: justify; line-height: 1.8;">@s.Abstract</p>
+                </div>
+                }
+
+                <!-- Authors -->
+                <div class="info-card">
+                    <h6><i class="bi bi-people me-2"></i>Authors</h6>
+                    @foreach (var author in s.Authors)
+                    {
+                    <div class="author-item @(author.IsCorresponding ? "corresponding" : "")">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>@author.AuthorOrder. @author.FullName</strong>
+                                @if (author.IsCorresponding)
+                                    {
+                                <span class="badge bg-success ms-2">Corresponding Author</span>
+                                    }
+                                <br>
+                                <small class="text-muted">
+                                    @if (!string.IsNullOrEmpty(author.Designation))
+                                        {
+                                    <span>@author.Designation</span><br>
+                                        }
+                                    @if (!string.IsNullOrEmpty(author.Institution))
+                                        {
+                                    <span><i class="bi bi-building me-1"></i>@author.Institution</span><br>
+                                        }
+                                    @if (!string.IsNullOrEmpty(author.Country))
+                                        {
+                                    <span><i class="bi bi-geo-alt me-1"></i>@author.Country</span>
+                                        }
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">
+                                    <i class="bi bi-envelope me-1"></i>@author.Email
+                                    @if (!string.IsNullOrEmpty(author.Phone))
+                                        {
+                                    <br><i class="bi bi-phone me-1"></i>@author.Phone
+                                        }
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                <!-- Status History -->
+                @if (s.StatusHistory != null && s.StatusHistory.Any())
+                {
+                <div class="info-card">
+                    <h6><i class="bi bi-clock-history me-2"></i>Status History</h6>
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var history in s.StatusHistory)
+                                {
+                            <tr>
+                                <td>@history.ChangedAt.ToString("dd MMM yyyy, HH:mm")</td>
+                                <td><span class="badge bg-secondary">@history.ToStatus</span></td>
+                                <td>@history.Remarks</td>
+                            </tr>
+                                }
+                        </tbody>
+                    </table>
+                </div>
+                }
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Assignment Info -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Your Assignment</h6>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            <span class="label">Status:</span>
+                            @if (Model.Status == "Completed")
+                            {
+                            <span class="badge bg-success">Completed</span>
+                            }
+                            else
+                            {
+                            <span class="badge bg-warning text-dark">@Model.Status</span>
+                            }
+                        </p>
+                        <p><span class="label">Assigned:</span> @Model.AssignedAt.ToString("dd MMM yyyy")</p>
+                        @if (Model.DueDate.HasValue)
+                        {
+                        <p>
+                            <span class="label">Due Date:</span>
+                            <span class="@(Model.DueDate < DateTime.UtcNow ? "text-danger" : "")">
+                                @Model.DueDate.Value.ToString("dd MMM yyyy")
+                            </span>
+                        </p>
+                        }
+                        @if (Model.Status == "Completed")
+                        {
+                        <hr>
+                        <p><span class="label">Your Score:</span> @Model.Score / 5</p>
+                        <p>
+                            <span class="label">Recommendation:</span>
+                            <span class="badge @(Model.Recommendation == "Accept" ? "bg-success" : Model.Recommendation == "Reject" ? "bg-danger" : "bg-warning text-dark")">
+                                @Model.Recommendation
+                            </span>
+                        </p>
+                        if (!string.IsNullOrEmpty(Model.Comments))
+                            {
+                        <p>
+                            <span class="label">Your Comments:</span><br>
+                            <small>@Model.Comments</small>
+                        </p>
+                            }
+                        <p><span class="label">Completed:</span> @Model.CompletedAt?.ToString("dd MMM yyyy, HH:mm")</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-lightning me-2"></i>Actions</h6>
+                    </div>
+                    <div class="card-body">
+                        <a href="/reviewer/manuscript/@Model.Id" target="_blank" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-file-pdf me-2"></i>View Manuscript (PDF)
+                        </a>
+
+                        @if (Model.Status != "Completed")
+                        {
+                        <a href="/reviewer/review/@Model.Id" class="btn btn-success w-100">
+                            <i class="bi bi-pencil-square me-2"></i>Submit Review
+                        </a>
+                        }
+                        else
+                        {
+                        <div class="alert alert-success mb-0 text-center">
+                            <i class="bi bi-check-circle me-2"></i>Review Submitted
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Review Guidelines -->
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Review Guidelines</h6>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">
+                            <p><strong>Please evaluate based on:</strong></p>
+                            <ul class="mb-2">
+                                <li>Originality & Contribution</li>
+                                <li>Methodology & Analysis</li>
+                                <li>Clarity & Presentation</li>
+                                <li>References & Citations</li>
+                                <li>Relevance to Legal Research</li>
+                            </ul>
+                            <p class="mb-0">
+                                <strong>Score Guide:</strong><br>
+                                5 - Excellent | 4 - Good | 3 - Average | 2 - Below Average | 1 - Poor
+                            </p>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

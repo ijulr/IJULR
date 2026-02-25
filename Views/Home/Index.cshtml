@@ -1,0 +1,632 @@
+@{
+    ViewData["Title"] = "Home"; var settings = ViewBag.Settings as Dictionary<string, string> ?? new Dictionary<string, string>();
+}
+
+<style>
+    .hero-banner {
+        background: linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);
+        padding: 40px 0;
+        position: relative
+    }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/></svg>') repeat;
+            opacity: 0.3
+        }
+
+    .hero-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2)
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap
+    }
+
+    .stat-badge {
+        background: linear-gradient(135deg,#f39c12,#e67e22);
+        color: #fff;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem
+    }
+
+        .stat-badge.blue {
+            background: linear-gradient(135deg,#3498db,#2980b9)
+        }
+
+        .stat-badge.green {
+            background: linear-gradient(135deg,#27ae60,#229954)
+        }
+
+    .availability-badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px
+    }
+
+        .availability-badges img {
+            height: 35px;
+            opacity: 0.9;
+            transition: opacity 0.3s
+        }
+
+            .availability-badges img:hover {
+                opacity: 1
+            }
+
+    .submit-box {
+        background: linear-gradient(135deg,#1a4f7a,#2874a6);
+        color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px
+    }
+
+        .submit-box h5 {
+            color: #fff;
+            margin-bottom: 15px
+        }
+
+    .doi-box {
+        background: #fff3cd;
+        border-left: 4px solid #f39c12;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 0 8px 8px 0
+    }
+
+    .section-title {
+        color: var(--primary);
+        border-left: 4px solid var(--accent);
+        padding-left: 15px;
+        margin: 40px 0 25px;
+        font-size: 1.5rem
+    }
+
+    .about-table {
+        width: 100%
+    }
+
+        .about-table tr {
+            border-bottom: 1px solid #eee
+        }
+
+        .about-table td {
+            padding: 8px 5px
+        }
+
+            .about-table td:first-child {
+                color: var(--primary);
+                font-weight: 600;
+                width: 45%
+            }
+
+        .about-table a {
+            color: var(--secondary);
+            text-decoration: underline
+        }
+
+    .journal-description {
+        line-height: 1.8;
+        color: #555;
+        text-align: justify
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s
+    }
+
+        .feature-item:hover {
+            background: #e8f4fd;
+            transform: translateX(5px)
+        }
+
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0
+    }
+
+    .feature-text h6 {
+        margin: 0 0 3px;
+        color: var(--primary)
+    }
+
+    .feature-text p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+        flex-wrap: wrap
+    }
+
+        .cta-buttons .btn {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 25px
+        }
+
+    .certificate-preview {
+        background: #fff;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden
+    }
+
+        .certificate-preview::before {
+            content: 'SAMPLE';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%) rotate(-30deg);
+            font-size: 4rem;
+            color: rgba(0,0,0,0.05);
+            font-weight: bold;
+            pointer-events: none
+        }
+
+    .certificate-inner {
+        border: 3px double var(--primary);
+        padding: 30px 20px;
+        background: linear-gradient(to bottom,#fffef5,#fff)
+    }
+
+        .certificate-inner h4 {
+            color: var(--primary);
+            margin-bottom: 5px
+        }
+
+        .certificate-inner .journal-name {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            margin-bottom: 20px
+        }
+
+        .certificate-inner .cert-text {
+            font-size: 0.9rem;
+            color: #555
+        }
+
+    .sidebar-cta {
+        background: linear-gradient(135deg,#e74c3c,#c0392b);
+        color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 20px
+    }
+
+        .sidebar-cta h5 {
+            color: #fff
+        }
+
+        .sidebar-cta .btn {
+            background: #fff;
+            color: #e74c3c;
+            font-weight: 600
+        }
+
+    .indexing-grid {
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        gap: 10px
+    }
+
+    .indexing-item {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        transition: all 0.3s
+    }
+
+        .indexing-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px)
+        }
+
+        .indexing-item img {
+            max-height: 40px;
+            max-width: 100%
+        }
+
+        .indexing-item span {
+            display: block;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 5px
+        }
+
+    .quick-action-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        height: 100%
+    }
+
+        .quick-action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12)
+        }
+
+        .quick-action-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px
+        }
+
+        .quick-action-card h5 {
+            color: var(--primary);
+            margin-bottom: 10px
+        }
+
+        .quick-action-card p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px
+        }
+</style>
+
+<!-- Hero Banner Section -->
+<section class="hero-banner">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="text-white mb-4">
+                    <h1 class="display-5 fw-bold text-white mb-3">Get Published where it really counts!</h1>
+                    <p class="lead mb-0">International Journal of Unified Law Research (IJULR) - A Peer-Reviewed, Open Access Journal</p>
+                </div>
+                <div class="hero-stats mb-3">
+                    <span class="stat-badge"><i class="bi bi-patch-check me-1"></i> Free DOI</span>
+                </div>
+            </div>
+            <div class="col-lg-5 mt-4 mt-lg-0">
+                <div class="hero-card">
+                    <h5 class="text-primary mb-3"><i class="bi bi-send-fill me-2"></i>Submit Manuscript</h5>
+                    <p class="text-muted mb-2">To submit your manuscript <strong>online</strong> (primary):</p>
+                    <a href="/Submission/Submit" class="btn btn-primary btn-sm mb-3"><i class="bi bi-cloud-upload me-1"></i> CLICK HERE</a>
+                    <p class="text-muted mb-2">Email Submission (alternative):</p>
+                    <a href="mailto:@settings.GetValueOrDefault("ContactEmail", "submissions@ijulr.com")" class="text-primary">@settings.GetValueOrDefault("ContactEmail", "submissions@ijulr.com")</a>
+
+                    <div class="doi-box">
+                        <h6 class="mb-2"><i class="bi bi-link-45deg text-warning"></i> FREE DOI</h6>
+                        <small class="text-muted">IJULR is happy to offer <strong>FREE DOIs</strong> (Digital Object Identifier) for all the published papers.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content Section -->
+<section class="page-content">
+    <div class="container">
+        <div class="row">
+            <!-- Left Content Column -->
+            <div class="col-lg-8">
+
+                <!-- About the Journal -->
+                <h2 class="section-title">About the Journal</h2>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <table class="about-table mb-4">
+                            <tr><td>ISSN:</td><td>@settings.GetValueOrDefault("ISSN", "XXXX-XXXX")</td></tr>
+                            <tr><td>Impact Factor:</td><td>@settings.GetValueOrDefault("ImpactFactor", "5.2") (2024)</td></tr>
+                            <tr><td>Peer Review Process:</td><td>Double - Blind Peer Review Process</td></tr>
+                            <tr><td>Frequency of Publication:</td><td>Quarterly (4 Issues per year)</td></tr>
+                            <tr><td>Language:</td><td>English</td></tr>
+                            <tr><td>Accessibility:</td><td>Open Access</td></tr>
+                            <tr><td>Indexing Available:</td><td></td></tr>
+                            <tr><td>Discipline/Subcategories:</td><td>Google Scholar, DRJI, ROAD</td></tr>
+                            <tr><td>Plagiarism Software:</td><td><a href="/Home/PlagiarismPolicy">Turnitin</a> (95% and Dedication to rejection)</td></tr>
+                        </table>
+
+                        <div class="journal-description">
+                            <p><strong>International Journal of Unified Law Research</strong> is an <strong>Open Access</strong>, online bi-monthly scholarly <strong>Peer-Reviewed</strong> multi-disciplinary International Journal bearing <strong>ISSN @settings.GetValueOrDefault("ISSN", "XXXX-XXXX")</strong>, established in 2024, published by <strong>VidhiLegum</strong>. It is a highly reputed, Multi Indexed International Journal, with an <strong>Impact Factor of @settings.GetValueOrDefault("ImpactFactor", "5.2")</strong>. It is an award for the landscape of scholarly publishing in rapidly changing. We're also to emergence of new perspectives among editors, viewers and publishers which has ultimately pave way to true Research and opportunities across discipline.</p>
+
+                            <p class="mt-3"><strong>International Journal of Unified Law Research</strong> wishes to be a leader in fostering a new kind of discussion in various fields in law management and wider with Dedication. Ensuring that such engagement is constructive and fair it is late for understanding its symbols, <strong>International Journal of Unified Law Research</strong> will be at the forefront in reforming relationships between communities and institution of higher learning.</p>
+
+                            <p class="mt-3"><strong>International Journal of Unified Law Research</strong> publishes the community's seeking sound Law Management in Humanities Subjects.</p>
+                        </div>
+
+                        <div class="submit-box">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5><i class="bi bi-stars me-2"></i>Get one step ahead of everyone!</h5>
+                                    <p class="mb-0 small">Get your publication on MANUPATRA and GOOGLE SCHOLAR indexed journal.</p>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <a href="/Submission/Submit" class="btn btn-warning"><i class="bi bi-upload me-1"></i> SUBMIT HERE</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call for Papers -->-
+                <h2 class="section-title">Call for Papers</h2>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <p>The <strong>International Journal of Unified Law Research (ISSN: @settings.GetValueOrDefault("ISSN", "XXXX-XXXX"))</strong> ISO 9001-2015 Certified Research Journal invites Research papers, Articles, Short Notes, <a href="/Home/Page?slug=book-review">Book Reviews</a>, Case Commentaries and other such for the upcoming volume. You can submit your manuscripts via <a href="/Submission/Submit">Online Submission Process</a> or through Email at <a href="mailto:@settings.GetValueOrDefault("ContactEmail", "submissions@ijulr.com")">@settings.GetValueOrDefault("ContactEmail", "submissions@ijulr.com")</a></p>
+
+
+                        <p class="mt-3">Kindly follow the <a href="/Home/AuthorGuidelines"><strong>Submission Guidelines</strong></a>: Provided you do not submit the manuscript to another journal or conference till it is review at IJULR. All Manuscripts submitted to IJULR go through a strict plagiarism check in iThenticate of Turnitin and then it is forwarded for review of Quality, originality and contribution.</p>
+
+                        <p class="mt-3">We publish <strong>4 (four)</strong> Issues and accept Manuscripts throughout the year.</p>
+
+                        <p class="mt-3"><strong>Review Results:</strong> Within 3-5 days of submission.</p>
+
+                        <div class="cta-buttons">
+                            <a href="/Submission/Submit" class="btn btn-primary"><i class="bi bi-upload me-2"></i>SUBMIT MANUSCRIPT</a>
+                            <a href="/Submission/Track" class="btn btn-outline-primary"><i class="bi bi-search me-2"></i>TRACK MANUSCRIPT</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features of the Journal -->
+                <h2 class="section-title">Features of the Journal</h2>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-link-45deg"></i></div>
+                                    <div class="feature-text">
+                                        <h6>Unique DOI</h6>
+                                        <p>Assigned to each Manuscript</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-award"></i></div>
+                                    <div class="feature-text">
+                                        <h6>Free Certificate</h6>
+                                        <p>E-certificate assigned for each Author</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                                    <div class="feature-text">
+                                        <h6>High Impact Factor</h6>
+                                        <p>Impact Factor of @settings.GetValueOrDefault("ImpactFactor", "5.2") (2024)</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-star"></i></div>
+                                    <div class="feature-text">
+                                        <h6>Highly Reputed</h6>
+                                        <p>For effective and quality Law research work</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-lightning"></i></div>
+                                    <div class="feature-text">
+                                        <h6>Quick & Easy</h6>
+                                        <p>Paper publication process</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-headset"></i></div>
+                                    <div class="feature-text">
+                                        <h6>24/7 Quick Support</h6>
+                                        <p>Dedicated support team</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-people"></i></div>
+                                    <div class="feature-text">
+                                        <h6>Extensive Editorial Board</h6>
+                                        <p>Experienced Editorial and Reviewer board</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-currency-dollar"></i></div>
+                                    <div class="feature-text">
+                                        <h6>Minimum Charges</h6>
+                                        <p>Article Processing Charges with best Service</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                                    <div class="feature-text">
+                                        <h6>Review Results</h6>
+                                        <p>Within 3-5 days</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Certificate Preview -->
+                <h2 class="section-title">Certificate</h2>
+                <div class="certificate-preview mb-4">
+                    <div class="certificate-inner">
+                        <img src="~/images/certificate-template.jpg" alt="IJULR" style=" width: 100%; height: 100%;object-fit: contain;" onerror="this.style.display='none'">
+                    </div>
+                </div>
+
+                <!-- Submit Your Paper CTA -->
+                <div class="text-center mb-4">
+                    <a href="/Submission/Submit" class="btn btn-primary btn-lg px-5 py-3" style="border-radius:30px;font-size:1.2rem">
+                        <i class="bi bi-upload me-2"></i>SUBMIT YOUR PAPER
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="col-lg-4">
+
+                <!-- Call for Papers CTA -->
+                <div class="sidebar-cta">
+                    <h5><i class="bi bi-megaphone-fill me-2"></i>CALL FOR PAPERS</h5>
+                    <p class="small mb-3">Submit your research for the upcoming issue</p>
+                    <a href="/Submission/Submit" class="btn btn-sm"><i class="bi bi-arrow-right me-1"></i>Submit Now</a>
+                </div>
+
+                <!-- Latest Edition -->
+                <div class="sidebar-widget">
+                    <h5><i class="bi bi-journal-bookmark-fill me-2"></i>LATEST EDITION</h5>
+                    <a href="/Issue/CurrentIssue" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-eye me-1"></i> View Current Issue
+                    </a>
+                </div>
+
+                <!-- Indexed At -->
+                <div class="sidebar-widget">
+                    <h5><i class="bi bi-bookmark-star-fill me-2"></i>Indexed at</h5>
+                    <div class="indexing-grid">
+                        <div class="indexing-item">
+                            <i class="bi bi-journal-text fs-3 text-primary"></i>
+                            <span>HEINONLINE</span>
+                        </div>
+                        <div class="indexing-item">
+                            <i class="bi bi-book fs-3 text-success"></i>
+                            <span>MANUPATRA</span>
+                        </div>
+                        <div class="indexing-item">
+                            <i class="bi bi-google fs-3 text-danger"></i>
+                            <span>Google Scholar</span>
+                        </div>
+                        <div class="indexing-item">
+                            <i class="bi bi-signpost-2 fs-3 text-warning"></i>
+                            <span>ROAD</span>
+                        </div>
+                        <div class="indexing-item">
+                            <i class="bi bi-globe fs-3 text-info"></i>
+                            <span>DRJI</span>
+                        </div>
+                        <div class="indexing-item">
+                            <i class="bi bi-card-list fs-3 text-secondary"></i>
+                            <span>INDEX COPERNICUS</span>
+                        </div>
+                        <div class="indexing-item">
+                            <i class="bi bi-journal-richtext fs-3 text-primary"></i>
+                            <span>ISSN</span>
+                        </div>
+                        <div class="indexing-item">
+                            <i class="bi bi-bar-chart fs-3 text-success"></i>
+                            <span>IMPACT FACTOR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About Journal Stats -->
+                <div class="sidebar-widget">
+                    <h5>About Journal</h5>
+                    <table class="table table-sm mb-0">
+                        <tr><td><strong>ISSN:</strong></td><td>@settings.GetValueOrDefault("ISSN", "(Applied)")</td></tr>
+                        <tr><td><strong>Impact Factor:</strong></td><td>@settings.GetValueOrDefault("ImpactFactor", "5.2")</td></tr>
+                        <tr><td><strong>Frequency:</strong></td><td>Quarterly</td></tr>
+                        <tr><td><strong>Review:</strong></td><td>Double-Blind</td></tr>
+                        <tr><td><strong>Plagiarism:</strong></td><td>@settings.GetValueOrDefault("PlagiarismSoftware", "Turnitin")</td></tr>
+                        <tr><td><strong>Review Time:</strong></td><td>3-5 Days</td></tr>
+                    </table>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="sidebar-widget">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><a href="/Submission/Submit"><i class="bi bi-chevron-right me-2 text-primary"></i>Submit Paper</a></li>
+                        <li class="mb-2"><a href="/Submission/Track"><i class="bi bi-chevron-right me-2 text-primary"></i>Track Submission</a></li>
+                        <li class="mb-2"><a href="/Home/AuthorGuidelines"><i class="bi bi-chevron-right me-2 text-primary"></i>Author Guidelines</a></li>
+                        <li class="mb-2"><a href="/Issue/CurrentIssue"><i class="bi bi-chevron-right me-2 text-primary"></i>Current Issue</a></li>
+                        <li class="mb-2"><a href="/Issue/Archives"><i class="bi bi-chevron-right me-2 text-primary"></i>Archives</a></li>
+                        <li class="mb-2"><a href="/Home/EditorialBoard"><i class="bi bi-chevron-right me-2 text-primary"></i>Editorial Board</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Widget -->
+                <div class="sidebar-widget">
+                    <h5>Contact Us</h5>
+                    <p class="mb-2"><i class="bi bi-envelope me-2 text-primary"></i><a href="mailto:@settings.GetValueOrDefault("ContactEmail", "info@ijulr.com")">@settings.GetValueOrDefault("ContactEmail", "info@ijulr.com")</a></p>
+                    @if (!string.IsNullOrEmpty(settings.GetValueOrDefault("ContactPhone")))
+                    {
+                        <p class="mb-2"><i class="bi bi-phone me-2 text-primary"></i>@settings["ContactPhone"]</p>
+                    }
+                    <p class="mb-0"><i class="bi bi-globe me-2 text-primary"></i><a href="https://@settings.GetValueOrDefault("WebsiteUrl", "www.ijulr.com")">@settings.GetValueOrDefault("WebsiteUrl", "www.ijulr.com")</a></p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Quick Actions Row -->
+        <div class="row mt-5 g-4">
+            <div class="col-md-3">
+                <div class="quick-action-card">
+                    <i class="bi bi-upload"></i>
+                    <h5>Submit Paper</h5>
+                    <p>Submit your manuscript online for peer review</p>
+                    <a href="/Submission/Submit" class="btn btn-sm btn-primary">Submit Now</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quick-action-card">
+                    <i class="bi bi-search"></i>
+                    <h5>Track Submission</h5>
+                    <p>Check the status of your submitted paper</p>
+                    <a href="/Submission/Track" class="btn btn-sm btn-outline-primary">Track Now</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quick-action-card">
+                    <i class="bi bi-journal-text"></i>
+                    <h5>Current Issue</h5>
+                    <p>Browse the latest published articles</p>
+                    <a href="/Issue/CurrentIssue" class="btn btn-sm btn-outline-primary">View Issue</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quick-action-card">
+                    <i class="bi bi-people"></i>
+                    <h5>Editorial Board</h5>
+                    <p>Meet our team of expert reviewers</p>
+                    <a href="/Home/EditorialBoard" class="btn btn-sm btn-outline-primary">View Board</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

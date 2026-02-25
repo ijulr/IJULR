@@ -1,0 +1,223 @@
+@using Microsoft.AspNetCore.Http
+@{
+    var userName = Context.Session.GetString("UserName") ?? "Admin";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - IJULR Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI',sans-serif
+        }
+
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: linear-gradient(180deg,#1a4f7a 0%,#0d2840 100%);
+            position: fixed;
+            left: 0;
+            top: 0
+        }
+
+            .sidebar .logo {
+                padding: 25px;
+                border-bottom: 1px solid rgba(255,255,255,.1)
+            }
+
+                .sidebar .logo h4 {
+                    color: #fff;
+                    margin: 0;
+                    font-size: 1.2rem
+                }
+
+                .sidebar .logo small {
+                    color: rgba(255,255,255,.6);
+                    font-size: .75rem
+                }
+
+        .sidebar-nav {
+            padding: 20px 0
+        }
+
+            .sidebar-nav a {
+                display: flex;
+                align-items: center;
+                padding: 12px 25px;
+                color: rgba(255,255,255,.7);
+                text-decoration: none;
+                transition: all .3s
+            }
+
+                .sidebar-nav a:hover, .sidebar-nav a.active {
+                    background: rgba(255,255,255,.1);
+                    color: #fff
+                }
+
+                .sidebar-nav a i {
+                    width: 24px;
+                    margin-right: 12px;
+                    font-size: 1.1rem
+                }
+
+            .sidebar-nav .nav-divider {
+                height: 1px;
+                background: rgba(255,255,255,.1);
+                margin: 15px 0
+            }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px
+        }
+
+        .top-bar {
+            background: #fff;
+            padding: 15px 25px;
+            margin: -30px -30px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 15px rgba(0,0,0,.05);
+            height: 100%
+        }
+
+            .stat-card h3 {
+                font-size: 2rem;
+                color: #1a4f7a;
+                margin-bottom: 5px
+            }
+
+            .stat-card p {
+                color: #666;
+                margin: 0;
+                font-size: .9rem
+            }
+
+            .stat-card.primary {
+                background: linear-gradient(135deg,#1a4f7a,#2874a6);
+                color: #fff
+            }
+
+                .stat-card.primary h3, .stat-card.primary p {
+                    color: #fff
+                }
+
+        .data-table {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,.05)
+        }
+
+            .data-table .table {
+                margin: 0
+            }
+
+                .data-table .table th {
+                    background: #f8f9fa;
+                    font-weight: 600;
+                    border: none;
+                    padding: 15px
+                }
+
+                .data-table .table td {
+                    padding: 15px;
+                    vertical-align: middle;
+                    border-color: #f0f0f0
+                }
+
+        .badge-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: .8rem
+        }
+
+        .badge-submitted {
+            background: #e3f2fd;
+            color: #1565c0
+        }
+
+        .badge-underreview {
+            background: #fff3e0;
+            color: #ef6c00
+        }
+
+        .badge-accepted {
+            background: #e8f5e9;
+            color: #2e7d32
+        }
+
+        .badge-rejected {
+            background: #ffebee;
+            color: #c62828
+        }
+
+        .badge-published {
+            background: #e0f2f1;
+            color: #00695c
+        }
+
+        .badge-paymentpending {
+            background: #fce4ec;
+            color: #ad1457
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            <h4>IJULR</h4>
+            <small>Editorial Panel</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/editorial/dashboard" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a href="/editorial/submissions" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Submissions" ? "active" : "")"><i class="bi bi-file-earmark-text"></i> Submissions</a>
+            <a href="/editorial/reviewers" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Reviewers" ? "active" : "")"><i class="bi bi-people"></i> Reviewers</a>
+            <div class="nav-divider"></div>
+            <a href="/editorial/volumes" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Volumes" ? "active" : "")"><i class="bi bi-collection"></i> Volumes & Issues</a>
+            <a href="/editorial/pages" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Pages" ? "active" : "")"><i class="bi bi-file-richtext"></i> Pages</a>
+            <a href="/editorial/editorial-board"><i class="bi bi-person-badge"></i> Editorial Board</a>
+            <div class="nav-divider"></div>
+            <a href="/editorial/settings" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")"><i class="bi bi-gear"></i> Settings</a>
+            <a href="/editorial/email-logs"><i class="bi bi-envelope"></i> Email Logs</a>
+            <div class="nav-divider"></div>
+            <a href="/" target="_blank"><i class="bi bi-globe"></i> View Website</a>
+            <a href="/editorial/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+            <div><i class="bi bi-person-circle me-2"></i>@userName</div>
+        </div>
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        }
+        @RenderBody()
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

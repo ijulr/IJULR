@@ -1,0 +1,97 @@
+@model SubmissionListViewModel
+@{ViewData["Title"] = "Submissions"; Layout = "_AdminLayout";}
+
+<div class="data-table mb-4">
+    <div class="p-3">
+        <form method="get" class="row g-3">
+            <div class="col-md-4"><input name="search" class="form-control" placeholder="Search by Tracking ID or Title..." value="@Model.SearchTerm" /></div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    @foreach(var s in SubmissionListViewModel.Statuses){
+                    <option value="@s" selected="@(Model.StatusFilter == s)">@s</option>
+}
+                </select>
+            </div>
+            <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Filter</button></div>
+        </form>
+    </div>
+</div>
+
+<div class="data-table">
+    <div class="p-3 border-bottom d-flex justify-content-between">
+        <h5 class="mb-0">All Submissions (@Model.TotalCount)</h5>
+    </div>
+    <table class="table">
+        <thead><tr><th>Tracking ID</th><th>Title</th><th>Author</th><th>Category</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+            @foreach(var s in Model.Submissions)
+            {
+            <tr>
+                <td><strong>@s.TrackingId</strong></td>
+                <td>@(s.PaperTitle.Length > 40 ? s.PaperTitle.Substring(0, 40) + "..." : s.PaperTitle)</td>
+                <td>@s.PrimaryAuthor?.FullName</td>
+                <td><small>@s.Category</small></td>
+                <td><span class="badge badge-status badge-@s.Status.ToLower()">@s.Status</span></td>
+                <td>@s.SubmittedAt.ToString("dd MMM")</td>
+                <td>
+                    <a href="/editorial/submission/@s.Id" class="btn btn-sm btn-primary">View</a>
+                    @if(s.Status != "Published")
+                        {
+                    <button type="button" class="btn btn-sm btn-danger ms-1"
+                            onclick="confirmDelete('@s.Id', '@s.TrackingId', '@s.PaperTitle.Replace("'", "\\'").Replace("\"", "")')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                        }
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this submission?</p>
+                <div class="alert alert-warning">
+                    <strong>Tracking ID:</strong> <span id="deleteTrackingId"></span><br>
+                    <strong>Title:</strong> <span id="deleteTitle"></span>
+                </div>
+                <p class="text-danger mb-0"><strong>Warning:</strong> This will permanently delete:</p>
+                <ul class="text-danger">
+                    <li>All uploaded files (manuscript, receipts, certificates)</li>
+                    <li>All author information</li>
+                    <li>Review assignments and comments</li>
+                    <li>Email and WhatsApp logs</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Delete Permanently
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, trackingId, title) {
+            document.getElementById('deleteTrackingId').textContent = trackingId;
+            document.getElementById('deleteTitle').textContent = title;
+            document.getElementById('deleteForm').action = '/editorial/submission/delete/' + id;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+}

@@ -1,0 +1,278 @@
+@using IJULR.Web.Helpers
+@inject FileUrlHelper FileUrlHelper
+@model CurrentIssueViewModel
+@{
+    ViewData["Title"] = "Current Issue";
+}
+
+<style>
+    .issue-header {
+        background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .issue-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 0 20px;
+        border-left: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        opacity: 0.8;
+    }
+
+    .section-title {
+        color: #b8860b;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
+
+    .article-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #3182ce;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+        .article-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+    .article-number {
+        color: #3182ce;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .article-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1a202c;
+        text-decoration: none;
+        line-height: 1.4;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+        .article-title:hover {
+            color: #3182ce;
+        }
+
+    .article-meta {
+        color: #718096;
+        font-size: 0.85rem;
+        margin: 12px 0;
+    }
+
+        .article-meta a {
+            color: #3182ce;
+            text-decoration: none;
+        }
+
+            .article-meta a:hover {
+                text-decoration: underline;
+            }
+
+    .author-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .author-avatar {
+        width: 36px;
+        height: 36px;
+        background: #e2e8f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #718096;
+        font-size: 0.8rem;
+    }
+
+    .author-name {
+        font-weight: 600;
+        color: #1a202c;
+        font-size: 0.9rem;
+    }
+
+    .author-affiliation {
+        color: #718096;
+        font-size: 0.8rem;
+    }
+
+    .tag {
+        display: inline-block;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .btn-view {
+        background: #b8860b;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+        .btn-view:hover {
+            background: #9a7209;
+            color: white;
+        }
+
+    .btn-download {
+        background: #16a34a;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+        .btn-download:hover {
+            background: #15803d;
+            color: white;
+        }
+
+    .btn-citation {
+        background: white;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        padding: 8px 20px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+        .btn-citation:hover {
+            background: #f8fafc;
+            color: #1a202c;
+        }
+</style>
+
+<section class="page-content">
+    <div class="container">
+        @if (Model.Issue != null)
+        {
+            <!-- Issue Header -->
+            <div class="issue-header">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="issue-icon">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-1 fw-bold" style="color: #ffffff;">@Model.Issue.DisplayTitle</h2>
+                            <p class="mb-0 opacity-75" style="color: #ffffff;">January - March 2026</p>
+                        </div>
+                    </div>
+                    @if (Model.Papers.Any())
+                    {
+                        <div class="d-flex">
+                            <div class="stat-box">
+                                <div class="stat-number">@Model.Papers.Count()</div>
+                                <div class="stat-label">Articles</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-number">@Model.Papers.SelectMany(p => p.Authors).Count()</div>
+                                <div class="stat-label">Authors</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            if (Model.Papers.Any())
+            {
+                <h3 class="section-title"><i class="bi bi-file-text me-2"></i>Published Articles</h3>
+
+                int idx = 0;
+                foreach (var paper in Model.Papers)
+                {
+                    idx++;
+                    <div class="article-card">
+                        <div class="article-number">
+                            <a href="/Issue/Paper/@paper.Id" class="article-title">@(idx). @paper.PaperTitle</a>
+                        </div>
+
+                        <div class="article-meta">
+                            <span class="me-4"><i class="bi bi-file-earmark me-1"></i> Pages: @paper.PageRange</span>
+                            @if (!string.IsNullOrEmpty(paper.DOI))
+                            {
+                                <a href="https://doi.org/@paper.DOI" target="_blank">https://doij.org/@paper.DOI</a>
+                            }
+                        </div>
+
+                        <!-- Authors -->
+                        <div class="my-3">
+                            @foreach (var author in paper.Authors)
+                            {
+                                <div class="author-item">
+                                    <div class="author-avatar"><i class="bi bi-person"></i></div>
+                                    <div>
+                                        <div class="author-name">@author.FullName</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <a href="/Issue/Paper/@paper.Id" class="btn btn-view"><i class="bi bi-eye me-1"></i> View</a>
+                            <a href="@FileUrlHelper.GetViewUrl(paper.ManuscriptFilePath)" class="btn btn-download"><i class="bi bi-download me-1"></i> Download PDF</a>
+                            <a href="/Issue/ExportCitation/@paper.Id" class="btn btn-citation"><i class="bi bi-quote me-1"></i> Export Citation</a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-journal-x display-4 text-muted"></i>
+                    <h5 class="mt-3">No Papers Published Yet</h5>
+                    <p class="text-muted">Papers will appear here once published.</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info">Current issue information will be available soon.</div>
+        }
+    </div>
+</section>

@@ -1,0 +1,135 @@
+@model IEnumerable<IJULR.Web.Models.EditorialBoardMember>
+    @{
+    ViewData["Title"] = "Editorial Board";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    }
+
+    <div class="mb-4 d-flex justify-content-between">
+        <h5>Editorial Board Members</h5>
+        <a href="@Url.Action("CreateBoardMember")" class="btn btn-primary"><i class="bi bi-plus me-2"></i>Add Member</a>
+    </div>
+    <div class="data-table ">
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Institution</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Actions</th> 
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                    {
+                        foreach (var member in Model)
+                        {
+                <tr>
+                    <td>
+                        <strong>@member.FullName</strong><br>
+                        <small class="text-muted">@member.Email</small>
+                    </td>
+                    <td>@member.Designation</td>
+                    <td>@member.Institution</td>
+                    <td>
+                        @{
+                                        string categoryClass = "bg-dark";
+                                        string categoryDisplay = member.BoardCategory ?? "Editorial Board";
+
+                                        if (member.BoardCategory == "ChiefEditor")
+                                        {
+                                            categoryClass = "bg-primary";
+                                            categoryDisplay = "Chief Editor";
+                                        }
+                                        else if (member.BoardCategory == "AssociateEditor")
+                                        {
+                                            categoryClass = "bg-info";
+                                            categoryDisplay = "Associate Editor";
+                                        }
+                                        else if (member.BoardCategory == "AdvisoryBoard")
+                                        {
+                                            categoryClass = "bg-secondary";
+                                            categoryDisplay = "Advisory Board";
+                                        }
+                        }
+                        <span class="badge @categoryClass">@categoryDisplay</span>
+                    </td>
+                    <td>
+                        @if (member.IsActive)
+                                    {
+                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                        <span class="badge bg-danger">Inactive</span>
+                                    }
+                    </td>
+                    <td>
+                        <a href="@Url.Action("EditBoardMember", new { id = member.Id })"
+                           class="btn btn-sm btn-warning me-1" title="Edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal"
+                                data-id="@member.Id"
+                                data-name="@member.FullName"
+                                title="Delete">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+                        }
+                    }
+                    else
+                    {
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">No members found</td>
+                </tr>
+                    }
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Delete Confirmation</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <strong id="memberNameDisplay"></strong>?
+                    <p class="text-muted mt-2 mb-0">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" action="" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var id = button.getAttribute('data-id');
+                    var name = button.getAttribute('data-name');
+
+                    document.getElementById('memberNameDisplay').textContent = name;
+                    document.getElementById('deleteForm').action = '/editorial/editorial-board/delete/' + id;
+                });
+            }
+        });
+    </script>

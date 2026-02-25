@@ -1,0 +1,20 @@
+@model List<Page>
+@{ViewData["Title"] = "Pages"; Layout = "_AdminLayout";}
+
+<div class="data-table">
+    <div class="p-3 border-bottom"><h5 class="mb-0">Manage Pages</h5></div>
+    <table class="table">
+        <thead><tr><th>Title</th><th>Slug</th><th>Menu</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            @foreach(var p in Model){
+                <tr>
+                    <td><strong>@p.Title</strong></td>
+                    <td><code>@p.Slug</code></td>
+                    <td>@p.ParentMenu</td>
+                    <td>@(p.IsPublished ? "<span class='badge bg-success'>Published</span>" : "<span class='badge bg-secondary'>Draft</span>")</td>
+                    <td><a href="/editorial/pages/@p.Id/edit" class="btn btn-sm btn-outline-primary">Edit</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

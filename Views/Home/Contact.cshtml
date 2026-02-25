@@ -1,0 +1,348 @@
+@{ViewData["Title"] = "Contact Us";
+var settings = ViewBag.Settings as Dictionary<string, string> ?? new Dictionary<string, string>();
+string email = settings.GetValueOrDefault("ContactEmail", "info@ijulr.com");
+string phone = settings.GetValueOrDefault("ContactPhone", "");
+string address = settings.GetValueOrDefault("Address", "");
+}
+
+<style>
+    .contact-hero {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        padding: 50px 0;
+        text-align: center;
+        margin-bottom: 0;
+    }
+
+        .contact-hero h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+    .contact-hero-line {
+        width: 60px;
+        height: 4px;
+        background: #1a365d;
+        margin: 0 auto;
+        border-radius: 2px;
+    }
+
+    .contact-section {
+        padding: 50px 0;
+        background: #f8fafc;
+    }
+
+    .section-title {
+        color: #3182ce;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .section-text {
+        color: #4a5568;
+        line-height: 1.8;
+        margin-bottom: 15px;
+    }
+
+    .btn-submit-paper {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        padding: 14px 30px;
+        border-radius: 5px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 15px;
+        transition: all 0.3s;
+    }
+
+        .btn-submit-paper:hover {
+            background: linear-gradient(135deg, #c82333 0%, #a71d2a 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .contact-form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 35px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+        .contact-form-card .form-control {
+            background: #f1f5f9;
+            border: none;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+            .contact-form-card .form-control:focus {
+                background: #e2e8f0;
+                box-shadow: none;
+                outline: none;
+            }
+
+        .contact-form-card textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+    .captcha-box {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .captcha-question {
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+
+    .captcha-input {
+        width: 80px !important;
+        text-align: center;
+    }
+
+    .btn-send {
+        background: #1a365d;
+        color: white;
+        padding: 14px 35px;
+        border-radius: 5px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s;
+    }
+
+        .btn-send:hover {
+            background: #2c5282;
+            color: white;
+        }
+
+    .contact-info-section {
+        padding: 50px 0;
+        background: white;
+    }
+
+    .contact-card {
+        text-align: center;
+        padding: 30px 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+        transition: all 0.3s;
+        height: 100%;
+    }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+    .contact-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 1.5rem;
+    }
+
+        .contact-icon.email-icon {
+            background: linear-gradient(135deg, #38b2ac, #319795);
+            color: white;
+        }
+
+        .contact-icon.phone-icon {
+            background: linear-gradient(135deg, #3182ce, #2c5282);
+            color: white;
+        }
+
+        .contact-icon.address-icon {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            color: white;
+        }
+
+    .contact-card h5 {
+        color: #1a202c;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .contact-card p {
+        color: #718096;
+        font-size: 0.9rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .contact-card a {
+        color: #3182ce;
+        text-decoration: none;
+    }
+
+        .contact-card a:hover {
+            text-decoration: underline;
+        }
+
+    .note-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px 20px;
+        border-radius: 0 8px 8px 0;
+        margin-top: 20px;
+    }
+
+        .note-box p {
+            margin: 0;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+</style>
+
+<!-- Hero Section -->
+<div class="contact-hero">
+    <div class="container">
+        <h1>Reach Us</h1>
+        <div class="contact-hero-line"></div>
+    </div>
+</div>
+
+<!-- Contact Form Section -->
+<section class="contact-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Left Side - Info -->
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="section-title">Get in Touch</h2>
+                <p class="section-text">
+                    Having difficulty in submission or just want to ask a simple query?
+                    Use the contact form or reach out to us via email. We promise that
+                    we'll get back to you as soon as possible.
+                </p>
+                <p class="section-text">
+                    Please note that we do not provide support via Call. Also, no documents
+                    submitted via WhatsApp will be considered official. Kindly submit
+                    documents at the given email id only.
+                </p>
+                <a href="/Submission/Submit" class="btn-submit-paper">
+                    <i class="bi bi-send me-2"></i>SUBMIT PAPER NOW
+                </a>
+
+                <div class="note-box">
+                    <p><i class="bi bi-info-circle me-2"></i><strong>Note:</strong> For paper submissions, please use the online submission portal for faster processing.</p>
+                </div>
+            </div>
+
+            <!-- Right Side - Form -->
+            <div class="col-lg-6">
+                <div class="contact-form-card">
+                    <form id="contactForm" method="post">
+                        <input type="text" class="form-control" name="Name" placeholder="Name" required>
+                        <input type="email" class="form-control" name="Email" placeholder="Email Address" required>
+                        <input type="text" class="form-control" name="Subject" placeholder="Subject">
+                        <textarea class="form-control" name="Message" placeholder="Message" required></textarea>
+
+                        <div class="captcha-box">
+                            <span class="captcha-question" id="captchaQuestion">13 + 14 =</span>
+                            <input type="text" class="form-control captcha-input" id="captchaAnswer" placeholder="?" required>
+                            <input type="hidden" id="captchaExpected">
+                        </div>
+
+                        <button type="submit" class="btn btn-send">
+                            <i class="bi bi-send me-2"></i>SEND MESSAGE
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Info Cards -->
+<section class="contact-info-section">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Email -->
+            <div class="col-md-4">
+                <div class="contact-card">
+                    <div class="contact-icon email-icon">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <h5>Email</h5>
+                    <p><a href="mailto:@email">@email</a></p>
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="col-md-4">
+                <div class="contact-card">
+                    <div class="contact-icon phone-icon">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+                    <h5>Phone</h5>
+                    @if(!string.IsNullOrEmpty(phone))
+                    {
+                    <p><a href="tel:@phone">@phone</a></p>
+                    }
+                    else
+                    {
+                    <p>Kindly use Email to<br>schedule a call with us!</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="col-md-4">
+                <div class="contact-card">
+                    <div class="contact-icon address-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h5>Address</h5>
+                    @if(!string.IsNullOrEmpty(address))
+                    {
+                    <p>@address</p>
+                    }
+                    else
+                    {
+                    <p>India</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        var num1 = Math.floor(Math.random() * 20) + 1;
+        var num2 = Math.floor(Math.random() * 20) + 1;
+        var answer = num1 + num2;
+
+        document.getElementById('captchaQuestion').textContent = num1 + ' + ' + num2 + ' =';
+        document.getElementById('captchaExpected').value = answer;
+
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            var userAnswer = parseInt(document.getElementById('captchaAnswer').value);
+            var expected = parseInt(document.getElementById('captchaExpected').value);
+
+            if (userAnswer !== expected) {
+                e.preventDefault();
+                alert('Please solve the math problem correctly.');
+
+                num1 = Math.floor(Math.random() * 20) + 1;
+                num2 = Math.floor(Math.random() * 20) + 1;
+                answer = num1 + num2;
+                document.getElementById('captchaQuestion').textContent = num1 + ' + ' + num2 + ' =';
+                document.getElementById('captchaExpected').value = answer;
+                document.getElementById('captchaAnswer').value = '';
+            }
+        });
+    })();
+</script>

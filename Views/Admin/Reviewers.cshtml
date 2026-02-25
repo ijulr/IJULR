@@ -1,0 +1,92 @@
+@model List<Reviewer>
+    @{ViewData["Title"] = "Reviewers"; Layout = "_AdminLayout";}
+
+    @if(TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+    @if(TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+
+    <div class="mb-4 d-flex justify-content-between">
+        <h5>Reviewers</h5>
+        <a href="/editorial/reviewers/create" class="btn btn-primary"><i class="bi bi-plus me-2"></i>Add Reviewer</a>
+    </div>
+
+    <div class="data-table ">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Institution</th>
+                    <th>Specialization</th>
+                    <th>Assignments</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var r in Model)
+            {
+                <tr>
+                    <td><strong>@r.User?.FullName</strong></td>
+                    <td>@r.User?.Email</td>
+                    <td>@r.User?.Institution</td>
+                    <td><small>@r.Specialization</small></td>
+                    <td>@r.CurrentAssignments / @r.MaxAssignments (@r.TotalReviews total)</td>
+                    <td>
+                        @if(r.IsAvailable)
+                        {
+                        <span class="badge bg-success">Available</span>
+                        }
+                        else
+                        {
+                        <span class="badge bg-secondary">Unavailable</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/editorial/reviewers/@r.Id/edit"
+                           class="btn btn-sm btn-warning me-1" title="Edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger"
+                                title="Delete"   onclick="confirmDelete(@r.Id, '@r.User?.FullName?.Replace(" '", "\\' "))')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete reviewer <strong id="reviewerName"></strong>?</p>
+                    <p class="text-danger small">This will also remove all their review assignments.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="post" style="display:inline">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>function confirmDelete(id, name) {
+    document.getElementById('reviewerName').textContent = name;
+    document.getElementById('deleteForm').action = '/editorial/reviewers/' + id + '/delete';
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}</script>

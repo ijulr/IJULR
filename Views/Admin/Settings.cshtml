@@ -1,0 +1,38 @@
+@model SiteSettingsViewModel
+@{ViewData["Title"] = "Settings"; Layout = "_AdminLayout";}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="data-table">
+            <div class="p-3 border-bottom"><h5 class="mb-0">Site Settings</h5></div>
+            <div class="p-4">
+                <form asp-action="Settings" method="post" enctype="multipart/form-data">
+                    <h6 class="mb-3">Journal Information</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label class="form-label">Journal Name</label><input asp-for="JournalName" class="form-control" /></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Abbreviation</label><input asp-for="JournalAbbreviation" class="form-control" /></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">ISSN</label><input asp-for="ISSN" class="form-control" placeholder="Leave empty until allotted" /></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Impact Factor</label><input asp-for="ImpactFactor" class="form-control" placeholder="Leave empty until available" /></div>
+                        <div class="col-md-12 mb-3"><label class="form-label">Plagiarism Software</label><input asp-for="PlagiarismSoftware" class="form-control" /></div>
+                    </div>
+                    <hr>
+                    <h6 class="mb-3">Contact Information</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label class="form-label">Contact Email</label><input asp-for="ContactEmail" type="email" class="form-control" /></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Contact Phone</label><input asp-for="ContactPhone" class="form-control" /></div>
+                        <div class="col-md-12 mb-3"><label class="form-label">Address</label><textarea asp-for="ContactAddress" class="form-control" rows="2"></textarea></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Website URL</label><input asp-for="WebsiteUrl" class="form-control" /></div>
+                    </div>
+                    <hr>
+                    <h6 class="mb-3">Branding</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label class="form-label">Logo</label><input asp-for="LogoFile" type="file" class="form-control" accept="image/*" /></div>
+                        <div class="col-md-6 mb-3" hidden><label class="form-label">Payment QR Code</label><input asp-for="PaymentQRFile" type="file" class="form-control" accept="image/*" /></div>
+                        <div class="col-md-12 mb-3"><label class="form-label">Copyright Text</label><input asp-for="CopyrightText" class="form-control" /></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

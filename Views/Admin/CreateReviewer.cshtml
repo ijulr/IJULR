@@ -1,0 +1,27 @@
+@model CreateReviewerViewModel
+@{ViewData["Title"] = "Add Reviewer"; Layout = "_AdminLayout";}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="data-table">
+            <div class="p-3 border-bottom"><h5 class="mb-0">Add New Reviewer</h5></div>
+            <div class="p-4">
+                <form asp-action="CreateReviewer" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label class="form-label">First Name *</label><input asp-for="FirstName" class="form-control" /></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Last Name *</label><input asp-for="LastName" class="form-control" /></div>
+                    </div>
+                    <div class="mb-3"><label class="form-label">Email *</label><input asp-for="Email" type="email" class="form-control" /></div>
+                    <div class="mb-3"><label class="form-label">Password *</label><input asp-for="Password" type="password" class="form-control" /></div>
+                    <div class="mb-3"><label class="form-label">Phone</label><input asp-for="Phone" class="form-control" /></div>
+                    <div class="mb-3"><label class="form-label">Institution</label><input asp-for="Institution" class="form-control" /></div>
+                    <div class="mb-3"><label class="form-label">Specialization</label><textarea asp-for="Specialization" class="form-control" rows="2"></textarea></div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Create Reviewer</button>
+                        <a href="/editorial/reviewers" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

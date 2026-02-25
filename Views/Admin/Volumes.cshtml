@@ -1,0 +1,94 @@
+@model List<Volume>
+    @{ViewData["Title"] = "Volumes & Issues"; Layout = "_AdminLayout";}
+
+    <div class="data-table mb-4">
+        <div class="p-3 border-bottom"><h6 class="mb-0">Create New Volume</h6></div>
+        <div class="p-3">
+            <form asp-action="CreateVolume" method="post" class="row g-3">
+                <div class="col-md-3"><input type="number" name="year" class="form-control" value="@(DateTime.Now.Year)" placeholder="Year" /></div>
+                <div class="col-md-3"><button type="submit" class="btn btn-primary">Create Volume</button></div>
+            </form>
+        </div>
+    </div>
+
+    @foreach(var v in Model){
+    <div class="data-table mb-4">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Volume @v.VolumeNumber (@v.Year)</h6>
+            <button type="button" class="btn btn-outline-danger btn-sm btn-delete-volume"
+                    data-volume-id="@v.Id"
+                    data-volume-name="Volume @v.VolumeNumber (@v.Year)">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+        </div>
+        <table class="table mb-0">
+            <thead><tr><th>Issue</th><th>Title</th><th>Quarter</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                @if(v.Issues != null){
+                foreach(var i in v.Issues.Where(x => !x.IsDeleted).OrderBy(x => x.IssueNumber)){
+                <tr>
+                    <td><strong>Issue @i.IssueNumber</strong></td>
+                    <td>@i.Title</td>
+                    <td>@i.QuarterName</td>
+                    <td>
+                        @if(i.IsCurrentIssue){<span class="badge bg-success">Current</span>}
+                        else if(i.IsPublished){<span class="badge bg-primary">Published</span>}
+                        else{<span class="badge bg-secondary">Draft</span>}
+                    </td>
+                    <td>
+                        @if(!i.IsCurrentIssue){
+                        <form asp-action="SetCurrentIssue" asp-route-id="@i.Id" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-outline-success">Set Current</button>
+                        </form>
+                        }
+                    </td>
+                </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle text-danger me-2"></i>Confirm Delete
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete <strong id="volumeName"></strong>?</p>
+                    <p class="text-muted mb-0"><small>This will also delete all issues under this volume. This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form asp-action="DeleteVolume" method="post" id="deleteForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" id="deleteVolumeId" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i>Delete Volume
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.btn-delete-volume').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var volumeId = this.getAttribute('data-volume-id');
+                var volumeName = this.getAttribute('data-volume-name');
+
+                document.getElementById('volumeName').textContent = volumeName;
+                document.getElementById('deleteVolumeId').value = volumeId;
+
+                var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                modal.show();
+            });
+        });
+    </script>

@@ -1,0 +1,36 @@
+@model AdminDashboardViewModel
+@{ViewData["Title"] = "Dashboard"; Layout = "_AdminLayout";}
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3"><div class="stat-card primary"><h3>@Model.TotalSubmissions</h3><p>Total Submissions</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h3>@Model.Submitted</h3><p>Pending Review</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h3>@Model.UnderReview</h3><p>Under Review</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h3>@Model.Published</h3><p>Published</p></div></div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3"><div class="stat-card"><h3>@Model.Accepted</h3><p>Accepted</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h3>@Model.Rejected</h3><p>Rejected</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h3>@Model.PaymentPending</h3><p>Payment Pending</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h3>@Model.TotalReviewers</h3><p>Reviewers</p></div></div>
+</div>
+
+<div class="data-table">
+    <div class="p-3 border-bottom"><h5 class="mb-0">Recent Submissions</h5></div>
+    <table class="table">
+        <thead><tr><th>Tracking ID</th><th>Title</th><th>Author</th><th>Status</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+            @foreach(var s in Model.RecentSubmissions)
+            {
+                <tr>
+                    <td><strong>@s.TrackingId</strong></td>
+                    <td>@(s.PaperTitle.Length > 50 ? s.PaperTitle.Substring(0, 50) + "..." : s.PaperTitle)</td>
+                    <td>@s.PrimaryAuthor?.FullName</td>
+                    <td><span class="badge badge-status badge-@s.Status.ToLower()">@s.Status</span></td>
+                    <td>@s.SubmittedAt.ToString("dd MMM yyyy")</td>
+                    <td><a href="/editorial/submission/@s.Id" class="btn btn-sm btn-outline-primary">View</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

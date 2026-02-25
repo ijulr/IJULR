@@ -1,0 +1,88 @@
+@model Submission
+@{ViewData["Title"] = "Submission Status";}
+
+<section class="page-content">
+    <div class="container">
+        <h1 class="page-title">Submission Status</h1>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>@Model.PaperTitle</h4>
+                        <p><strong>Tracking ID:</strong> @Model.TrackingId</p>
+                        <p><strong>Category:</strong> @Model.Category</p>
+                        <p><strong>Submitted:</strong> @Model.SubmittedAt.ToString("dd MMM yyyy, hh:mm tt")</p>
+                        <p><strong>Authors:</strong> @string.Join(", ", Model.Authors.OrderBy(a => a.AuthorOrder).Select(a => a.FullName))</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h5>Current Status</h5>
+                        @{
+                            var statusClass = Model.Status switch {
+                                "Submitted" => "bg-info",
+                                "UnderReview" => "bg-warning text-dark",
+                                "Revision" => "bg-secondary",
+                                "Accepted" => "bg-success",
+                                "Rejected" => "bg-danger",
+                                "PaymentPending" => "bg-warning text-dark",
+                                "Published" => "bg-primary",
+                                _ => "bg-secondary"
+                            };
+                        }
+                        <span class="badge @statusClass fs-5 px-4 py-2">@Model.Status</span>
+                        
+                        @if(Model.Status == "Accepted" || Model.Status == "PaymentPending")
+                        {
+                            <div class="mt-4">
+                                <a href="/Submission/UploadPayment/@Model.Id?email=@Model.PrimaryAuthor?.Email" class="btn btn-success"><i class="bi bi-upload me-2"></i>Upload Payment Receipt</a>
+                            </div>
+                        }
+                        
+                        @if(Model.Status == "Revision")
+                        {
+                            <div class="mt-4">
+                                <a href="/Submission/Resubmit/@Model.Id?email=@Model.PrimaryAuthor?.Email" class="btn btn-warning"><i class="bi bi-upload me-2"></i>Submit Revised Manuscript</a>
+                            </div>
+                        }
+                        
+                        @if(Model.Status == "Published")
+                        {
+                            <div class="mt-4">
+                                <p><strong>DOI:</strong> @Model.DOI</p>
+                                <p><strong>Pages:</strong> @Model.PageRange</p>
+                                <a href="/Issue/Paper/@Model.Id" class="btn btn-primary"><i class="bi bi-eye me-2"></i>View Paper</a>
+                                <a href="/Issue/Certificate/@Model.Id" class="btn btn-success"><i class="bi bi-award me-2"></i>Download Certificate</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if(!string.IsNullOrEmpty(Model.RevisionComments))
+        {
+            <div class="card mb-4 border-warning">
+                <div class="card-header bg-warning"><i class="bi bi-chat-left-text me-2"></i>Revision Comments</div>
+                <div class="card-body">@Model.RevisionComments</div>
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-header"><i class="bi bi-clock-history me-2"></i>Status History</div>
+            <div class="card-body">
+                <table class="table">
+                    <thead><tr><th>Date</th><th>Status</th><th>Remarks</th></tr></thead>
+                    <tbody>
+                        @foreach(var h in Model.StatusHistory)
+                        {
+                            <tr>
+                                <td>@h.ChangedAt.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                <td><span class="badge bg-secondary">@h.ToStatus</span></td>
+                                <td>@h.Remarks</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

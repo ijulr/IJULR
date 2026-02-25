@@ -1,0 +1,35 @@
+@model LoginViewModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editorial Login - IJULR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body{background:linear-gradient(135deg,#1a4f7a 0%,#0d2840 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}</style>
+</head>
+<body>
+    <div class="card shadow" style="width:400px">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <h4 class="text-primary">IJULR</h4>
+                <p class="text-muted">Editorial Panel</p>
+            </div>
+            <form asp-action="Login" method="post">
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
+                }
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" type="email" class="form-control" autofocus />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

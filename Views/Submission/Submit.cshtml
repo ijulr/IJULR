@@ -1,0 +1,100 @@
+@model SubmitPaperViewModel
+@{ViewData["Title"] = "Submit Paper";}
+
+<section class="page-content">
+    <div class="container">
+        <h1 class="page-title">Submit Your Paper</h1>
+        <form asp-action="Submit" method="post" enctype="multipart/form-data">
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div asp-validation-summary="All" class="alert alert-danger"></div>
+            }
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white"><i class="bi bi-file-text me-2"></i>Paper Details</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="PaperTitle" class="form-label">Paper Title <span class="text-danger">*</span></label>
+                        <input asp-for="PaperTitle" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label">Category <span class="text-danger">*</span></label>
+                        <select asp-for="Category" asp-items="SubmitPaperViewModel.Categories" class="form-select"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Abstract" class="form-label">Abstract <span class="text-danger">*</span> <small class="text-muted">(min 100 characters)</small></label>
+                        <textarea asp-for="Abstract" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Keywords" class="form-label">Keywords <span class="text-danger">*</span> <small class="text-muted">(comma separated)</small></label>
+                        <input asp-for="Keywords" class="form-control" placeholder="e.g., Constitutional Law, Human Rights, Privacy" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ManuscriptFile" class="form-label">Manuscript File <span class="text-danger">*</span> <small class="text-muted">(PDF or Word)</small></label>
+                        <input asp-for="ManuscriptFile" type="file" class="form-control" accept=".pdf,.doc,.docx" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white"><i class="bi bi-person me-2"></i>Author 1 (Corresponding Author) <span class="text-warning">*</span></div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input asp-for="Author1.FullName" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input asp-for="Author1.Email" type="email" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone/Mobile</label>
+                            <input asp-for="Author1.Phone" class="form-control" placeholder="+91..." />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Institution <span class="text-danger">*</span></label>
+                            <input asp-for="Author1.Institution" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Designation</label>
+                            <input asp-for="Author1.Designation" class="form-control" placeholder="e.g., Research Scholar, Professor" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Country</label>
+                            <input asp-for="Author1.Country" class="form-control" value="India" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><i class="bi bi-person me-2"></i>Author 2 (Optional)</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><input asp-for="Author2.FullName" class="form-control" placeholder="Full Name" /></div>
+                        <div class="col-md-6 mb-3"><input asp-for="Author2.Email" type="email" class="form-control" placeholder="Email" /></div>
+                        <div class="col-md-6 mb-3"><input asp-for="Author2.Phone" class="form-control" placeholder="Phone" /></div>
+                        <div class="col-md-6 mb-3"><input asp-for="Author2.Institution" class="form-control" placeholder="Institution" /></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><i class="bi bi-person me-2"></i>Author 3 (Optional)</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><input asp-for="Author3.FullName" class="form-control" placeholder="Full Name" /></div>
+                        <div class="col-md-6 mb-3"><input asp-for="Author3.Email" type="email" class="form-control" placeholder="Email" /></div>
+                        <div class="col-md-6 mb-3"><input asp-for="Author3.Phone" class="form-control" placeholder="Phone" /></div>
+                        <div class="col-md-6 mb-3"><input asp-for="Author3.Institution" class="form-control" placeholder="Institution" /></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg px-5"><i class="bi bi-send me-2"></i>Submit Paper</button>
+            </div>
+        </form>
+    </div>
+</section>

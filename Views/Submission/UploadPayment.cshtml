@@ -1,0 +1,28 @@
+@model PaymentUploadViewModel
+@{ViewData["Title"] = "Upload Payment";}
+
+<section class="page-content">
+    <div class="container">
+        <h1 class="page-title">Upload Payment Receipt</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong>Tracking ID:</strong> @Model.TrackingId<br>
+                            <strong>Paper:</strong> @Model.PaperTitle
+                        </div>
+                        <form asp-action="UploadPayment" method="post" enctype="multipart/form-data">
+                            <input type="hidden" asp-for="SubmissionId" />
+                            <div class="mb-3">
+                                <label asp-for="ReceiptFile" class="form-label">Payment Receipt (PDF/Image)</label>
+                                <input asp-for="ReceiptFile" type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+                            </div>
+                            <button type="submit" class="btn btn-success w-100"><i class="bi bi-upload me-2"></i>Upload Receipt</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
